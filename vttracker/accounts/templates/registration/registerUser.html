@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+    crossorigin="anonymous">
+    <style>
+      .form{
+        width: 100%;
+      }
+      .formUser{
+        #display: flex;
+      }
+      .form-group{
+        display: flex;
+      }
+      .form-accounts{
+        margin-left: 10px;
+      }
+      label{
+        width: 200px;
+      }
+      .personal{
+        width: 550px;
+        padding: 30px;
+      }
+      .account{
+        width: 550px;
+        padding: 30px;
+      }
+      .btnSaveUser{
+        padding: 25px;
+        margin-top: -40px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="">
+    		<h3>Nuevo Usuario</h3>
+        <br>
+        <div class="form">
+          <form class="formUser" method="post" id="myForm">
+      			{% csrf_token %}
+            <div class="personal">
+              <h5>Datos Personales</h5>
+              <br>
+              <div class="form-group">
+                {{form.name.label_tag}}
+                {{form.name}}
+              </div>
+              <div class="form-group">
+                {{form.lastP.label_tag}}
+                {{form.lastP}}
+              </div>
+              <div class="form-group">
+                {{form.lastM.label_tag}}
+                {{form.lastM}}
+              </div>
+              <div class="form-group">
+                {{form.date_born.label_tag}}
+                {{form.date_born}}
+              </div>
+              <div class="form-group">
+                {{form.phone.label_tag}}
+                {{form.phone}}
+              </div>
+              <div class="form-group">
+                {{form.address.label_tag}}
+                {{form.address}}
+              </div>
+            </div>
+            <div class="account">
+              <h5>Datos de usuario</h5>
+              <br>
+              <div class="form-group">
+                {{form.username.label_tag}}
+                {{form.username}}
+              </div>
+              <div class="form-group">
+                {{form.email.label_tag}}
+                {{form.email}}
+              </div>
+              <div class="form-group">
+                <label>Contraseña</label>
+                {{form.password1}}
+              </div>
+              <div class="form-group">
+                <label>Repetir Contraseña</label>
+                {{form.password2}}
+              </div>
+            </div>
+            <div class="btnSaveUser">
+              <button class="btn btn-info" type="submit">Guardar</button>
+            </div>
+      		</form>
+        </div>
+    </div>
+  </body>
+</html>
