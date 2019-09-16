@@ -35,13 +35,17 @@
         margin-top: -40px;
       }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   </head>
   <body>
     <div class="">
     		<h3>Nuevo Usuario</h3>
         <br>
         <div class="form">
-          <form class="formUser" method="post" id="myForm">
+          <div id="msgErrors">
+
+          </div>
+          <form class="formUser" method="post" id="formSaveUser" action="{% url 'register'  %}">
       			{% csrf_token %}
             <div class="personal">
               <h5>Datos Personales</h5>
@@ -57,10 +61,6 @@
               <div class="form-group">
                 {{form.lastM.label_tag}}
                 {{form.lastM}}
-              </div>
-              <div class="form-group">
-                {{form.date_born.label_tag}}
-                {{form.date_born}}
               </div>
               <div class="form-group">
                 {{form.phone.label_tag}}
@@ -92,10 +92,64 @@
               </div>
             </div>
             <div class="btnSaveUser">
-              <button class="btn btn-info" type="submit">Guardar</button>
+              <button class="btn btn-info" type="submit" id="btnSaveUser">Guardar</button>
             </div>
       		</form>
         </div>
     </div>
   </body>
+  <script>
+
+    function jsonFormat(formArray) {
+      let returnArray = {};
+      for (let i=0;i<formArray.length;i++) {
+          if (formArray[i].value) {
+              returnArray[formArray[i].name] = formArray[i].value;
+          }
+      }
+      return returnArray;
+    }
+
+    $('#btnSaveUser').click(function(e){
+      e.preventDefault();
+
+      let form = $('#formSaveUser');
+      //let csrfmiddlewaretoken = form.find("input[name='csrfmiddlewaretoken']" ).val();
+      let formData = jsonFormat($("#formSaveUser").serializeArray());
+
+      console.log(formData);
+
+      $.ajax({
+        data: formData,
+        type: form.attr('method'),
+        url: form.attr('action'),
+        success: function(response){
+          if(response.status){
+            alert(response.msg);
+          }
+
+          if(!response.status){
+            let errors = response.errors;
+            let string = "";
+
+            for(field in errors){
+              let typeErrors = errors[field];
+
+              for(let i=0; i < typeErrors.length; i++){
+                  string = " " + typeErrors[i];
+              }
+
+              alert(field + ":" + string);
+              string = "";
+            }
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+    });
+
+
+  </script>
 </html>

@@ -12,10 +12,7 @@ class CustomUserManager(BaseUserManager):
 			raise ValueError('Debes introducir email')
 
 		email = self.normalize_email(email)
-		user = self.model(email,
-				is_staff=is_staff, is_active=True,
-				is_superuser=is_superuser, last_login=now,
-				date_joined=now, **extra_fields)
+		user = self.model(email, is_staff=is_staff, is_active=True, is_superuser=is_superuser, last_login=now, date_joined=now, **extra_fields)
 
 		user.set_password(password)
 		user.save(using=self._db)
@@ -28,22 +25,25 @@ class CustomUserManager(BaseUserManager):
 		return self._create_user(email, password, False, False, **extra_fields)
 
 class User(AbstractBaseUser):
+
+	email = models.EmailField(max_length=35, unique=True)
+
 	username = models.CharField(max_length=50, unique=True)
 	name = models.CharField(max_length=25, blank=True)
 	lastP = models.CharField(max_length=20, blank=True)
 	lastM = models.CharField(max_length=20, blank=True)
 	address = models.CharField(max_length=60, blank=True)
-	email = models.EmailField(max_length=35, unique=True)
 	phone = models.CharField(max_length=10, blank=True)
+	
 	password = models.CharField(max_length=128, blank=True)
 	is_staff = models.BooleanField(default=False)
 	is_superuser = models.BooleanField(default=False)
 	is_active= models.BooleanField(default=False)
 	date_joined = models.DateTimeField(max_length=6, blank = True)
-	date_born = models.DateTimeField(max_length=6, blank = True)
+	#date_born = models.DateTimeField(max_length=6, blank = True)
 
 	USERNAME_FIELD = 'email'
-	REQUIRED_FIELDS = ['username', 'name', 'lastP', 'lastM', 'address', 'phone', 'is_superuser', 'date_born']
+	REQUIRED_FIELDS = ['username', 'name', 'lastP', 'lastM', 'address', 'phone']
 
 	objects = CustomUserManager()
 
