@@ -3,8 +3,9 @@ from django.views.decorators.csrf import csrf_exempt
 from accounts.forms import RegistrationForm
 import simplejson as json
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 
-@csrf_exempt
+@login_required(redirect_field_name='accounts/login')
 def register(request):
 
 	if request.method == 'POST':

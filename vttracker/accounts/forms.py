@@ -26,7 +26,9 @@ class RegistrationForm(UserCreationForm):
 			'address',
 			'email',
 			'phone',
+			#'date_born',
 			'password1',
+
 			)
 
 		labels = {
@@ -35,19 +37,24 @@ class RegistrationForm(UserCreationForm):
             'lastP': 'Apellido Paterno',
             'lastM': 'Apellido Materno',
             'address': 'Dirección',
+			#'date_born': 'Fecha de Nacimiento',
             'phone': 'Telefono',
             'email': 'Email',
 			'password1': 'Contraseña',
+
+			#'is_superuser': 'Administrador',
         }
 
 		widgets={
+
 			'username': forms.TextInput(attrs={'class': 'validate form-control form-accounts'}),
 			'name': forms.TextInput(attrs={'class': 'validate form-control form-accounts'}),
 			'lastP': forms.TextInput(attrs={'class': 'validate form-control form-accounts'}),
 			'lastM': forms.TextInput(attrs={'class': 'validate form-control form-accounts'}),
 			'email': forms.EmailInput(attrs={'class': 'validate form-control form-accounts'}),
 			'phone': forms.TextInput(attrs={'class': 'validate form-control form-accounts'}),
-			'address': forms.TextInput(attrs={'class': 'validate form-control form-accounts'}),
+			#'date_born': forms.TextInput(attrs={'class': 'validate form-control form-accounts'}),
+			'address': forms.TextInput(attrs={'class': 'validate form-control form-accounts'})
 		}
 
 	def save(self, commit=True):
@@ -60,10 +67,10 @@ class RegistrationForm(UserCreationForm):
 		user.address = self.cleaned_data['address']
 		user.email = self.cleaned_data['email']
 		user.phone = self.cleaned_data['phone']
-		user.is_superuser = self.cleaned_data['is_superuser']
-		#user.is_driver = self.cleaned_data['is_driver']
+		user.is_superuser = False
 		user.is_active = True
 		user.date_joined = timezone.now()
+		#user.date_born = self.cleaned_data['date_born']
 
 		if commit:
 			user.save()

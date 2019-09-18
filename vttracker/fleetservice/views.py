@@ -9,4 +9,12 @@ def index(request):
     print(current_user.is_superuser)
 
     args = {'user': current_user}
-    return render(request, 'index.html', args)
+    return render(request, 'home/index.html', args)
+
+@login_required(login_url='/accounts/login/')
+def fleetAdmin(request):
+    return render(request, 'fleetAdmin/index.html')
+
+@login_required(login_url='/accounts/login/')
+def driverIndex(request):
+    return render(request, 'driver/index.html')

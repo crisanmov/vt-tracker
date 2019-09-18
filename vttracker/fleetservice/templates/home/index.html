@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>VTtracker::Inicio</title>
+{% endblock %}
+{% block body %}
+    <h2>Bienvenido! {{user.username}} a VT-Tracker</h2>
+    <br>
+    {% if user.is_superuser %}
+      <a href="{% url 'register' %}">Nuevo Usuario</a><br>
+    {% endif %}
+{% endblock %}
