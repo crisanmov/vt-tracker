@@ -126,6 +126,7 @@
         success: function(response){
           if(response.status){
             alert(response.msg);
+            window.location.replace("http://127.0.0.1:8000/accounts/register/");
           }
 
           if(!response.status){

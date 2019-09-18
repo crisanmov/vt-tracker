@@ -10,14 +10,14 @@ def register(request):
 	if request.method == 'POST':
 		form = RegistrationForm(request.POST)
 		response_data = {}
-		
+
 		if form.is_valid():
 
 			user = form.save(commit=False)
 			user.save()
 
 			response_data['status'] = True
-			response_data['msg'] = "El Usuario se " + user.email + " creo correctamente."
+			response_data['msg'] = "El Usuario " + user.email + " se creo correctamente."
 
 			return HttpResponse(json.dumps(response_data), content_type="application/json")
 		else:

@@ -27,14 +27,13 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractBaseUser):
 
 	email = models.EmailField(max_length=35, unique=True)
-
 	username = models.CharField(max_length=50, unique=True)
 	name = models.CharField(max_length=25, blank=True)
 	lastP = models.CharField(max_length=20, blank=True)
 	lastM = models.CharField(max_length=20, blank=True)
 	address = models.CharField(max_length=60, blank=True)
 	phone = models.CharField(max_length=10, blank=True)
-	
+
 	password = models.CharField(max_length=128, blank=True)
 	is_staff = models.BooleanField(default=False)
 	is_superuser = models.BooleanField(default=False)

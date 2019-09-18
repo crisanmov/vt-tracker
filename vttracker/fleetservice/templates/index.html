@@ -5,8 +5,12 @@
     <title></title>
   </head>
   <body>
-    Hello, world. You're index.
+    <h2>Bienvenido! {{user.username}} a VT-Tracker</h2>
     <br>
-    <p><a href="accounts/logout">logout</a></p>
+    {% if user.is_superuser %}
+      <a href="{% url 'register' %}">Nuevo Usuario</a><br>
+      <a href="{% url 'register' %}">Administar Flotilla</a>
+    {% endif %}
+    <p><a href="accounts/logout">Cerrar Sesión</a></p>
   </body>
 </html>
