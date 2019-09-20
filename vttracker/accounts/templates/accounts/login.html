@@ -7,9 +7,9 @@
   </head>
   <body>
     <div class="container" style="text-align: center; margin-top: 15px;">
-      <h2>VTtracker</h2><br>
+      <h2>VTtracker</h2>
       {% load static %}
-      <img src="{% static "images/login.jpg" %}" alt="login">
+      <img src="{% static "images/login.jpg" %}" alt="login" style="width: 16%;">
       <form method="post">
         {% csrf_token %}
         {{ form.username }}

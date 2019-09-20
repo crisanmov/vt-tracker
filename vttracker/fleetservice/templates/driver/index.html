@@ -1,13 +1,126 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
-    <h2>Flotilla VT-Tracker</h2>
-    <a href="javascript:history.back()">Regresar</a>
-    <br><br>
-    <a href="#">Nuevo Conductor</a>
-  </body>
-</html>
+{% extends 'base.html' %}
+{% block head %}
+  <title>Conductores</title>
+{% endblock %}
+{% block body %}
+  <div class="container">
+    <div class="" style="margin: 15px;">
+      <h3>Flotilla VTtracker</h3>
+      <a href="javascript:history.back()">Regresar</a>
+      <br><br>
+      <a class="btn btn-primary" href="{% url 'register' %}" id ="btnNewDriver" data-toggle="modal">Nuevo Conductor</a><br>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="newDriver" tabindex="-1" role="dialog" aria-labelledby="newDriverLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newDriverLabel">Asignar nuevo conductor</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+          <form class="" id="formNewDriver" action="{% url 'createDriver' %}" method="post">
+            <div class="form-group">
+              <label for="aliasDriver">Nombre o Alías: </label>
+              <input type="text" class="form-control" id="aliasDriver" placeholder="Introduce un nombre o alías">
+            </div>
+            <div class="form-group">
+              <label for="users">Usuarios disponibles: </label>
+              <select class="form-control" id="usersList">
+                <option value="0">Selecciona una opción</option>
+              </select>
+            </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" id="btnSaveDriver" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+
+    var $j = jQuery.noConflict();
+
+    function jsonFormat(formArray) {
+      let returnArray = {};
+      for (let i=0;i<formArray.length;i++) {
+          if (formArray[i].value) {
+              returnArray[formArray[i].name] = formArray[i].value;
+          }
+      }
+      return returnArray;
+    }
+
+    $j('#btnNewDriver').click(function(e){
+      e.preventDefault();
+
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'getUsers' %}",
+        success: function(response){
+          if(response.status){
+            let data = JSON.parse(response.data);
+            let usersList = $('#usersList');
+
+            for(let i=0; i<data.length; i++){
+              let fullname = data[i].fields.name + " " + data[i].fields.lastP + " " + data[i].fields.lastM;
+              let idUser = data[i].pk;
+              let option = document.createElement('option');
+
+              option.text = fullname;
+              option.setAttribute('value', idUser);
+              usersList.append(option);
+            }
+            //show Modal
+            $('#newDriver').modal('show');
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+
+
+    });
+
+    $j('#btnSaveDriver').click(function(e){
+      e.preventDefault();
+      //validation
+
+      let usersList = document.querySelector('#usersList');
+
+      let driver = {
+        'alias': document.querySelector('#aliasDriver').value,
+        'fullname': usersList.options[usersList.selectedIndex].text
+      };
+
+      saveDriver(driver);
+
+    });
+
+    function saveDriver(driver){
+      let form = $('#formNewDriver');
+      $j.ajax({
+        data: driver,
+        type: form.attr('method'),
+        url: form.attr('action'),
+        success: function(response){
+          console.log(response);
+        },
+        error: function(response){
+
+        }
+
+      });
+    }
+
+  </script>
+{% endblock %}

@@ -114,10 +114,8 @@
       e.preventDefault();
 
       let form = $('#formSaveUser');
-      //let csrfmiddlewaretoken = form.find("input[name='csrfmiddlewaretoken']" ).val();
       let formData = jsonFormat($("#formSaveUser").serializeArray());
-
-      console.log(formData);
+      //console.log(formData);
 
       $.ajax({
         data: formData,

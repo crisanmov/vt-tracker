@@ -59,7 +59,7 @@ class Binnacle(models.Model):
                          'start_datetime',
                          'end_datetime',
                     ]
-                    
+
     class Meta:
         verbose_name = _('bitacora')
         verbose_name_plural = _('bitacoras')
@@ -71,6 +71,7 @@ class Binnacle(models.Model):
 class Driver(models.Model):
     id_driver = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, blank=False)
+    is_active = models.BooleanField(default=False)
 
     #Relationship DB
     user = models.OneToOneField(

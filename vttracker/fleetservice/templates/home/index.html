@@ -4,9 +4,33 @@
 <title>VTtracker::Inicio</title>
 {% endblock %}
 {% block body %}
-    <h2>Bienvenido! {{user.username}} a VT-Tracker</h2>
+  <div class="container">
+    <h3 style="margin-top: 15px;">Bienvenido! {{user.username}} a VT-Tracker</h3>
     <br>
     {% if user.is_superuser %}
-      <a href="{% url 'register' %}">Nuevo Usuario</a><br>
+      <a class="btn btn-primary" href="{% url 'register' %}">Nuevo Usuario</a><br>
     {% endif %}
+    <br>
+    <table>
+      <tr>
+        <th class = "table-primary"># ID</th>
+        <th class = "table-primary">Username</th>
+        <th class = "table-primary">Nombre</th>
+        <th class = "table-primary">Email</th>
+        <th class = "table-primary"></th>
+        <!--<th class = "table-success"></th>
+        <th class = "table-success"></th>
+        <th class = "table-success"></th>-->
+      </tr>
+    {% for field in users %}
+    <tr>
+      <td>{{field.id}}</td>
+      <td>{{field.username}}</td>
+      <td>{{field.name}} {{field.lastP}} {{field.lastM}}</td>
+      <td>{{field.email}}</td>
+      <td><a href="#">Ver más</a></td>
+    </tr>
+    {% endfor %}
+    </table>
+  </div>
 {% endblock %}
