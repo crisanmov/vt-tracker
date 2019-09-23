@@ -1,76 +1,454 @@
 {% extends 'base.html' %}
-
 {% block head %}
   <title>Administrar Flotilla</title>
   <style>
     .services-container{
       display: flex;
       margin-top: 30px;
+      margin-left: 66px
     }
     .service{
       text-align: center;
       border: 2px solid #179e0e;
-      margin: 15px;
+      margin: 5px;
       transition: transform .2s !important; /* Animation */
     }
     .service:hover{
       transform: scale(1.1);
+      cursor: pointer;
     }
     .card img{
-      width: 140px;
-      height: 119px;
+      width: 50px;
+      height: 44px;
     }
     .card{
       text-align: -webkit-center !important;
-      width: 250px !important;
+      width: 140px !important;
       border: none !important;
     }
   </style>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
 {% endblock %}
 {% block body %}
   <div class="container">
-    <div class="" style="margin: 15px;">
-      <a href="javascript:history.back()">Regresar</a>
-      <h3>Servicios de Flotilla</h3>
+    <div class="" style="display: inline-flex;">
+      <div class="" style="margin: 15px;">
+        <!--<a href="javascript:history.back()">Regresar</a>-->
+        <h3 style="margin-top: 50px;">Servicios de Flotilla</h3>
+      </div>
+      <div class="services-container">
+
+        <!--Bitacora-->
+        <div class="service" id="binnacle">
+          <div class="card" style="width: 18rem;">
+            {% load static %}
+            <img src="{% static "images/bitacora.png" %}" class="card-img-top" alt="bitacora">
+          </div>
+          <div class="card-body">
+            <p class="card-text">Bitacora</p>
+          </div>
+        </div>
+
+        <!--Conductores-->
+        <div class="service" id="driver">
+          <div class="card" style="width: 18rem;">
+            {% load static %}
+            <img src="{% static "images/conductor.jpeg" %}" class="card-img-top" alt="bitacora">
+          </div>
+          <div class="card-body">
+            <p class="card-text">Conductores</p>
+          </div>
+        </div>
+
+        <!--Encomiendas-->
+        <div class="service" id="partialService">
+          <div class="card" style="width: 18rem;">
+            {% load static %}
+            <img src="{% static "images/encomienda.png" %}" class="card-img-top" alt="bitacora">
+          </div>
+          <div class="card-body">
+            <p class="card-text">Encomiendas</p>
+          </div>
+        </div>
+
+        <!--Vehiculos-->
+        <div class="service" id="vehicle">
+          <div class="card" style="width: 18rem;">
+            {% load static %}
+            <img src="{% static "images/vehiculo.png" %}" class="card-img-top" alt="bitacora">
+          </div>
+          <div class="card-body">
+            <p class="card-text">Vehiculos</p>
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div class="services-container">
-      <div class="service">
-        <div class="card" style="width: 18rem;">
-          {% load static %}
-          <img src="{% static "images/bitacora.png" %}" class="card-img-top" alt="bitacora">
-        </div>
-        <div class="card-body">
-          <p class="card-text">Bitacora</p>
-        </div>
+    <hr>
+    <div class="" id="content_service">
+
+
+      <!--Elements for drivers-->
+      <div class="" id="elemDrivers" style="display: none">
+        <h4>Conductores Activos</h4>
+        <br>
+        <a style="width: 20%;" class="btn btn-success" id ="btnNewDriver" data-toggle="modal">Nuevo Conductor</a><br>
+        <table class="table table-striped">
+          <tr>
+            <th scope="col"># ID</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Username</th>
+            <th scope="col">Email</th>
+            <th scope="col">Alias</th>
+            <th scope="col"></th>
+          </tr>
+          <tbody id="tbodyDriver"></tbody>
+        </table>
       </div>
-      <div class="service">
-        <div class="card" style="width: 18rem;">
-          {% load static %}
-          <img src="{% static "images/conductor.jpeg" %}" class="card-img-top" alt="bitacora">
-        </div>
-        <div class="card-body">
-          <a href="{% url 'driverIndex' %}">Conductores</a>
-        </div>
+
+      <!--Elements for Vehicles-->
+      <div class="" id="elemVehicles" style="display:none;">
+        <h4>Vehiculos Disponibles</h4>
+        <br>
+        <a style="display:none; width: 20%;" class="btn btn-success" id ="btnNewVehicle" data-toggle="modal">Nuevo Vehiculo</a>
+        <table class="table table-striped">
+          <tr>
+            <th scope="col"># ID</th>
+            <th scope="col">Matricula</th>
+            <th scope="col">Alias</th>
+            <th scope="col">Fecha de Servicio</th>
+            <th scope="col"></th>
+          </tr>
+          <tbody id="tbodyVehicle"></tbody>
+        </table>
       </div>
-      <div class="service">
-        <div class="card" style="width: 18rem;">
-          {% load static %}
-          <img src="{% static "images/encomienda.png" %}" class="card-img-top" alt="bitacora">
-        </div>
-        <div class="card-body">
-          <p class="card-text">Encomiendas</p>
-        </div>
-      </div>
-      <div class="service">
-        <div class="card" style="width: 18rem;">
-          {% load static %}
-          <img src="{% static "images/vehiculo.png" %}" class="card-img-top" alt="bitacora">
-        </div>
-        <div class="card-body">
-          <p class="card-text">Vehiculos</p>
+
+      <!-- Modal Driver-->
+      <div class="modal fade" id="newDriver" tabindex="-1" role="dialog" aria-labelledby="newDriverLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="newDriverLabel">Asignar nuevo conductor</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+            <form class="" id="formNewDriver" action="{% url 'createDriver' %}" method="post">
+              <div class="form-group">
+                <label for="aliasDriver">Nombre o Alías: </label>
+                <input type="text" class="form-control" id="aliasDriver" placeholder="Introduce un nombre o alías">
+              </div>
+              <div class="form-group">
+                <label for="users">Usuarios disponibles: </label>
+                <select class="form-control" id="usersList">
+                  <option value="0">Selecciona una opción</option>
+                </select>
+              </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" id="btnSaveDriver" class="btn btn-primary">Guardar</button>
+              </div>
+          </div>
         </div>
       </div>
 
+      <!-- Modal Vehicle-->
+      <div class="modal fade" id="newVehicle" tabindex="-1" role="dialog" aria-labelledby="newVehicleLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="newVehicleLabel">Nuevo Vehiculo</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="placaVehicle">Número de placa: </label>
+                <input type="text" class="form-control" id="placaVehicle" placeholder="Introduce el número de placa.">
+              </div>
+              <div class="form-group">
+                <label for="aliasVehicle">Nombre o alías del vehiculo: </label>
+                <input type="text" class="form-control" id="aliasVehicle" placeholder="Introduce el nombre o alías del vehiculo.">
+              </div>
+              <div class="form-group">
+                <label for="dateServiceVehicle">Fecha de servicio: </label>
+                <input type="date" class="form-control" id="dateServiceVehicle" max="3000-12-31" min="2015-01-01" placeholder="Introduce la ultima fecha de servicio al vehiculo.">
+              </div>
+              <div class="modal-footer">
+                <button type="submit" id="btnSaveVehicle" class="btn btn-primary">Guardar</button>
+              </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+
+    var $j = jQuery.noConflict();
+
+    $j('#driver').click(function(){
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+      getDrivers();
+    });
+
+    $j('#binnacle').click(function(){
+      setColorSelect($(this));
+    });
+
+    $j('#partialService').click(function(){
+      setColorSelect($(this));
+    });
+
+    $j('#vehicle').click(function(){
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+      getVehicles();
+
+    });
+
+    $j('#btnNewDriver').click(function(e){
+      e.preventDefault();
+
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'getUsers' %}",
+        success: function(response){
+          if(response.status){
+            let data = JSON.parse(response.data);
+            let usersList = $('#usersList');
+
+            for(let i=0; i<data.length; i++){
+              let fullname = data[i].fields.name + " " + data[i].fields.lastP + " " + data[i].fields.lastM;
+              let idUser = data[i].pk;
+              let option = document.createElement('option');
+
+              option.text = fullname;
+              option.setAttribute('value', idUser);
+              usersList.append(option);
+            }
+            //show Modal
+            $('#newDriver').modal('show');
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+
+
+    });
+
+    $j('#btnNewVehicle').click(function(e){
+      //show Modal
+      $('#newVehicle').modal('show');
+    });
+
+    $j('#btnSaveDriver').click(function(e){
+      e.preventDefault();
+      //validation
+
+      let usersList = document.querySelector('#usersList');
+
+      let driver = {
+        'alias': document.querySelector('#aliasDriver').value,
+        'fullname': usersList.options[usersList.selectedIndex].text,
+        'idUser': usersList.options[usersList.selectedIndex].value,
+        'csrfmiddlewaretoken': '{{ csrf_token }}',
+      };
+
+      saveDriver(driver);
+
+    });
+
+    $j('#btnSaveVehicle').click(function(e){
+      e.preventDefault();
+      //validation
+
+      let vehicle = {
+        'enrollment': document.querySelector('#placaVehicle').value,
+        'name': document.querySelector('#aliasVehicle').value,
+        'date_service': document.querySelector('#dateServiceVehicle').value,
+        'csrfmiddlewaretoken': '{{ csrf_token }}',
+      };
+
+      saveVehicle(vehicle);
+
+    });
+
+    function setColorSelect(service) {
+        service.css('backgroundColor','#49a746');
+        clearStyle(service.attr('id'));
+    }
+
+    function clearStyle(service){
+      let services = ['binnacle', 'driver', 'partialService', 'vehicle'];
+      for(let i=0; i<services.length; i++){
+        if(services[i] != $j('#' + service).attr('id')){
+          $j('#' + services[i]).css('backgroundColor','');
+        }
+      }
+    }
+
+    function cleanContentServices(service){
+
+      let idService = service.attr('id');
+      let content_services = {
+        "driver": "elemDrivers",
+        "vehicle": "elemVehicles",
+      };
+
+      for(service in content_services){
+        if(service != idService){
+          let idElements = content_services[service];
+          document.querySelector("#" + idElements).style.display = "none";
+        }
+      }
+
+      let content_service = document.querySelector('#content_service');
+
+
+      if(content_service.hasChildNodes()){
+        //content_service.innerHTML="";
+      }
+    }
+
+    function getDrivers(){
+
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'getDrivers' %}",
+        success: function(response){
+          //console.log(response);
+          if(response.status){
+            let data = response.data;
+            console.log(data);
+
+            let tbodyDriver = document.querySelector('#tbodyDriver');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+
+              let pk = data[i]['pk'];
+              let name = data[i]['name'];
+              let username = data[i]['username'];
+              let alias = data[i]['alias'];
+              let email = data[i]['email'];
+
+              content += "<tr><td>" + pk +
+                "</td><td>" + name +
+                "</td><td>"  + username +
+                "</td><td>" + email +
+                "</td><td>" + alias + "</td></tr>";
+            }
+
+            tbodyDriver.innerHTML = content;
+            document.querySelector('#elemDrivers').style.display = "block";
+            document.querySelector('#btnNewDriver').style.display = "block";
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+    }
+
+    function getVehicles(){
+
+      $j.ajax({
+        type: "GET",
+        url: "{% url 'getVehicles' %}",
+        success: function(response){
+          //console.log(response);
+          if(response.status){
+            let data = JSON.parse(response.data);
+            console.log(data);
+            let tbodyVehicle = document.querySelector('#tbodyVehicle');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+              let pk = data[i].pk;
+              let alias = data[i].fields.alias;
+              let enrollment = data[i].fields.enrollment;
+              let date_service = data[i].fields.data_service;
+              date_service = date_service.slice(0,10);
+
+              content += "<tr><td>" + pk +
+                "</td><td>" + enrollment +
+                "</td><td>"  + alias +
+                "</td><td>" + date_service +
+                "</td><td>" + " " + "</td></tr>";
+            }
+
+            tbodyVehicle.innerHTML = content;
+            document.querySelector('#elemVehicles').style.display = "block";
+            document.querySelector('#btnNewVehicle').style.display = "block";
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+
+    }
+
+    function jsonFormat(formArray) {
+      let returnArray = {};
+      for (let i=0;i<formArray.length;i++) {
+          if (formArray[i].value) {
+              returnArray[formArray[i].name] = formArray[i].value;
+          }
+      }
+      return returnArray;
+    }
+
+    function saveDriver(driver){
+      let form = $('#formNewDriver');
+      $j.ajax({
+        data: driver,
+        type: form.attr('method'),
+        url: form.attr('action'),
+        success: function(response){
+          console.log(response);
+          getDrivers();
+          $('#newDriver').modal('hide');
+        },
+        error: function(response){
+
+        }
+
+      });
+    }
+
+    function saveVehicle(vehicle){
+      $j.ajax({
+        data: vehicle,
+        type: "POST",
+        url: "{% url 'createVehicle' %}",
+        success: function(response){
+          console.log(response);
+          $('#newVehicle').modal('hide');
+          getVehicles()
+        },
+        error: function(response){
+
+        }
+
+      });
+    }
+  </script>
+
 {% endblock %}

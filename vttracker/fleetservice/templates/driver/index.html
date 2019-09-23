@@ -10,6 +10,27 @@
       <br><br>
       <a class="btn btn-primary" href="{% url 'register' %}" id ="btnNewDriver" data-toggle="modal">Nuevo Conductor</a><br>
     </div>
+    <table>
+      <tr>
+        <th class = "table-primary"># ID</th>
+        <th class = "table-primary">Alias</th>
+        <th class = "table-primary">Nombre</th>
+        <th class = "table-primary">Email</th>
+        <th class = "table-primary"></th>
+        <!--<th class = "table-success"></th>
+        <th class = "table-success"></th>
+        <th class = "table-success"></th>-->
+      </tr>
+    {% for field in drivers %}
+    <tr>
+      <td>{{field.id_driver}}</td>
+      <td>{{field.name}}</td>
+      <td>{{field.user.name}} {{field.user.lastP}} {{field.user.lastM}}</td>
+      <td>{{field.user.email}}</td>
+      <td><a href="#">Ver más</a></td>
+    </tr>
+    {% endfor %}
+    </table>
 
 
     <!-- Modal -->
@@ -99,7 +120,9 @@
 
       let driver = {
         'alias': document.querySelector('#aliasDriver').value,
-        'fullname': usersList.options[usersList.selectedIndex].text
+        'fullname': usersList.options[usersList.selectedIndex].text,
+        'idUser': usersList.options[usersList.selectedIndex].value,
+        'csrfmiddlewaretoken': '{{ csrf_token }}',
       };
 
       saveDriver(driver);

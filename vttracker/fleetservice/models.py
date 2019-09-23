@@ -77,6 +77,7 @@ class Driver(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
+        related_name='user'
     )
 
     binnacles = models.ManyToManyField('Binnacle', through='DriverBinacleService', related_name='idBinnacle')

@@ -4,33 +4,47 @@
 <title>VTtracker::Inicio</title>
 {% endblock %}
 {% block body %}
+<div class="" style="margin-top: 5px;">
+  <h5>Bienvenido! {{user.username}} a VT-Tracker</h5>
+</div>
   <div class="container">
-    <h3 style="margin-top: 15px;">Bienvenido! {{user.username}} a VT-Tracker</h3>
     <br>
     {% if user.is_superuser %}
-      <a class="btn btn-primary" href="{% url 'register' %}">Nuevo Usuario</a><br>
-    {% endif %}
-    <br>
-    <table>
+      <h4>Flotilla por Asignar</h4>
+      <br>
+      <a class="btn btn-success" href="{% url 'register' %}">Nuevo Usuario</a><br>
+      <br>
+      <table class="table table-striped">
+        <tr>
+          <th scope="col"># ID</th>
+          <th scope="col">Username</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Email</th>
+          <th scope="col"></th>
+          <!--<th class = "table-success"></th>
+          <th class = "table-success"></th>
+          <th class = "table-success"></th>-->
+        </tr>
+      {% for field in users %}
       <tr>
-        <th class = "table-primary"># ID</th>
-        <th class = "table-primary">Username</th>
-        <th class = "table-primary">Nombre</th>
-        <th class = "table-primary">Email</th>
-        <th class = "table-primary"></th>
-        <!--<th class = "table-success"></th>
-        <th class = "table-success"></th>
-        <th class = "table-success"></th>-->
+        <td>{{field.id}}</td>
+        <td>{{field.username}}</td>
+        <td>{{field.name}} {{field.lastP}} {{field.lastM}}</td>
+        <td>{{field.email}}</td>
+        <td><a href="#">Ver más</a></td>
       </tr>
-    {% for field in users %}
-    <tr>
-      <td>{{field.id}}</td>
-      <td>{{field.username}}</td>
-      <td>{{field.name}} {{field.lastP}} {{field.lastM}}</td>
-      <td>{{field.email}}</td>
-      <td><a href="#">Ver más</a></td>
-    </tr>
-    {% endfor %}
-    </table>
+      {% endfor %}
+      </table>
+      <hr>
+      <h4>Flotilla Asignada</h4>
+    {% endif %}
+
+    <div class="actionsDriver" style="display: grid;">
+        <a class="btn btn-danger" href="#">Registrar en Bitacora</a>
+        <br>
+        <a class="btn btn-danger" href="#">Nueva Encomienda</a>
+    </div>
+
+
   </div>
 {% endblock %}
