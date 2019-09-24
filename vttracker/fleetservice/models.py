@@ -6,6 +6,8 @@ class Service(models.Model):
     id_service = models.AutoField(primary_key=True)
     subject = models.CharField(max_length=70, blank=False, null=False)
     from_depto = models.CharField(max_length=70, blank=False, null=False)
+    start_kilometer = models.FloatField(blank=False, null=True)
+    end_kilometer = models.FloatField(blank=False, null=True)
     datetime = models.DateTimeField(max_length=6, blank = False, null=True)
     description = models.CharField(max_length=160, blank=False, null=False)
 
@@ -54,15 +56,7 @@ class Binnacle(models.Model):
     #Relationship DB
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
 
-    REQUIRED_FIELDS = ['id_binacle',
-                        'route',
-                         'start_kilometer',
-                         'end_kilometer',
-                         #'start_fuel',
-                         #'end_fuel',
-                         'start_datetime',
-                         'end_datetime',
-                    ]
+    REQUIRED_FIELDS = ['id_binacle', 'route', 'start_kilometer','end_kilometer', 'start_datetime', 'end_datetime']
 
     class Meta:
         verbose_name = _('bitacora')

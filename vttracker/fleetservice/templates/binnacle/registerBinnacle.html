@@ -50,7 +50,7 @@
   <script>
 
     var $j = jQuery.noConflict();
-    getUsers();
+    getVehicles();
 
     function jsonFormat(formArray) {
       let returnArray = {};
@@ -62,7 +62,7 @@
       return returnArray;
     }
 
-    function getUsers(){
+    function getVehicles(){
       $j.ajax({
         type: 'GET',
         url: "{% url 'getVehicles' %}",
@@ -76,7 +76,7 @@
               let option = document.createElement('option');
 
               option.text = vehicle;
-              option.setAttribute('value', vehicle);
+              option.setAttribute('value', data[i].pk);
               vehiclesList.append(option);
             }
           }else{
@@ -89,18 +89,40 @@
       });
     }
 
-    $('#btnSaveBinnacle').click(function(e){
+    function saveBinnacle(formData){
+      let form = $j('#formSaveBinnacle');
+
+      $j.ajax({
+        type: form.attr('method'),
+        url: form.attr('action'),
+        data: formData,
+        success: function(response){
+          console.log(response);
+          if(response.status){
+            alert(response.msg);
+
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+
+    }
+
+    $j('#btnSaveBinnacle').click(function(e){
       e.preventDefault();
 
-      let form = $('#formSaveBinnacle');
+      let form = $j('#formSaveBinnacle');
       let formData = jsonFormat(form.serializeArray());
       console.log(formData);
+
+      let vehiclesList = document.querySelector('#vehiclesList');
+      let vehicleSelected = vehiclesList.options[vehiclesList.selectedIndex].value;
+
+      formData['vehicle_id'] = vehicleSelected;
+      //validation
+      saveBinnacle(formData);
     });
-  </script>
-
-  <script>
-
-
-
   </script>
 {% endblock %}

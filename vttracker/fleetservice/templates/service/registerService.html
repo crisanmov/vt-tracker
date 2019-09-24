@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>VTtracker Registrar Encomienda</title>
+<style>
+  .content-binnacle{
+    width: 350px;
+  }
+</style>
+{% endblock %}
+{% block body %}
+<div class="container">
+  <div class="content-service">
+    <h5>Nueva Encomienda</h5>
+    <br>
+    <form class="formService" method="post" id="formSaveService" action="{% url 'registerService'  %}">
+      {% csrf_token %}
+      <div class="form-group">
+        {{form.subject.label_tag}}
+        {{form.subject}}
+      </div>
+      <div class="form-group">
+        {{form.from_depto.label_tag}}
+        {{form.from_depto}}
+      </div>
+      <div class="form-group">
+        {{form.start_kilometer.label_tag}}
+        {{form.start_kilometer}}
+      </div>
+      <div class="form-group">
+        {{form.end_kilometer.label_tag}}
+        {{form.end_kilometer}}
+      </div>
+      <div class="form-group">
+        {{form.datetime.label_tag}}
+        {{form.datetime}}
+      </div>
+      <div class="form-group">
+        {{form.description.label_tag}}
+        {{form.description}}
+      </div>
+      <br>
+      <div class="btnSaveService">
+        <button class="btn btn-info" type="submit" id="btnSaveservice">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

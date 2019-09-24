@@ -6,7 +6,10 @@ from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from accounts.models import User
-from fleetservice.forms import BinnacleForm, RefuelForm
+from fleetservice.forms import (
+    BinnacleForm,
+    RefuelForm,
+    ServiceForm,)
 from fleetservice.models import (
     Driver,
     Vehicle,
@@ -128,9 +131,26 @@ def createVehicle(request):
 @login_required(login_url='/accounts/login/')
 def registerBinnacle(request):
 
-	form = BinnacleForm()
-	args = {'form': form}
-	return render(request, 'binnacle/registerBinnacle.html', args)
+    if request.method == 'POST':
+        form = BinnacleForm(request.POST)
+        response_data = {}
+
+        if form.is_valid():
+            #form.save()
+            binnacle = form.save(commit=False)
+            binnacle.vehicle = Vehicle.objects.get(pk=request.POST.get('vehicle_id'))
+            binnacle.save()
+            response_data['status'] = True
+            response_data['msg'] = "Registro de bitacora exitoso."
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
+        else:
+            response_data['status'] = False
+            response_data['errors'] = form.errors
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
+    else:
+    	form = BinnacleForm()
+    	args = {'form': form}
+    	return render(request, 'binnacle/registerBinnacle.html', args)
 
 @login_required(login_url='/accounts/login/')
 def registerRefuel(request):
@@ -142,6 +162,6 @@ def registerRefuel(request):
 @login_required(login_url='/accounts/login/')
 def registerService(request):
 
-	form = RefuelForm()
+	form = ServiceForm()
 	args = {'form': form}
-	return render(request, 'refuel/registerRefuel.html', args)
+	return render(request, 'service/registerService.html', args)
