@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>VTtracker Registrar Bitacora</title>
+<style>
+  width: 350px;
+</style>
+{% endblock %}
+{% block body %}
+  <div class="container">
+    <div class="content-binnacle">
+      <h5>Nuevo Registro de Bitacora</h5>
+      <br>
+      <form class="formBinnacle" method="post" id="formSaveBinnacle" action="{% url 'registerBinnacle'  %}">
+        {% csrf_token %}
+        <div class="form-group">
+          {{form.route.label_tag}}
+          {{form.route}}
+        </div>
+        <div class="form-group">
+          {{form.start_kilometer.label_tag}}
+          {{form.start_kilometer}}
+        </div>
+        <div class="form-group">
+          {{form.end_kilometer.label_tag}}
+          {{form.end_kilometer}}
+        </div>
+        <div class="form-group">
+          {{form.start_datetime.label_tag}}
+          {{form.start_datetime}}
+        </div>
+        <div class="form-group">
+          {{form.end_datetime.label_tag}}
+          {{form.end_datetime}}
+        </div>
+        <div class="form-group">
+          <label for="vehicles">Vehiculo: </label>
+          <select class="form-control" id="vehiclesList">
+            <option value="0">Selecciona una opción</option>
+          </select>
+        </div>
+        <br>
+        <div class="btnSaveBinnacle">
+          <button class="btn btn-info" type="submit" id="btnSaveBinnacle">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+
+    var $j = jQuery.noConflict();
+    getUsers();
+
+    function jsonFormat(formArray) {
+      let returnArray = {};
+      for (let i=0;i<formArray.length;i++) {
+          if (formArray[i].value) {
+              returnArray[formArray[i].name] = formArray[i].value;
+          }
+      }
+      return returnArray;
+    }
+
+    function getUsers(){
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'getVehicles' %}",
+        success: function(response){
+          if(response.status){
+            let data = JSON.parse(response.data);
+            let vehiclesList = $('#vehiclesList');
+
+            for(let i=0; i<data.length; i++){
+              let vehicle = data[i].fields.alias;
+              let option = document.createElement('option');
+
+              option.text = vehicle;
+              option.setAttribute('value', vehicle);
+              vehiclesList.append(option);
+            }
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+    }
+
+    $('#btnSaveBinnacle').click(function(e){
+      e.preventDefault();
+
+      let form = $('#formSaveBinnacle');
+      let formData = jsonFormat(form.serializeArray());
+      console.log(formData);
+    });
+  </script>
+
+  <script>
+
+
+
+  </script>
+{% endblock %}

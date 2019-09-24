@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<title>VTtracker::Inicio</title>
+<title>VTtracker Inicio</title>
 {% endblock %}
 {% block body %}
 <div class="" style="margin-top: 5px;">
@@ -10,9 +10,9 @@
   <div class="container">
     <br>
     {% if user.is_superuser %}
-      <h4>Flotilla por Asignar</h4>
-      <br>
       <a class="btn btn-success" href="{% url 'register' %}">Nuevo Usuario</a><br>
+      <br>
+      <h4>Flotilla por Asignar</h4>
       <br>
       <table class="table table-striped">
         <tr>
@@ -38,13 +38,15 @@
       <hr>
       <h4>Flotilla Asignada</h4>
     {% endif %}
-
+    {% if not user.is_superuser %}
     <div class="actionsDriver" style="display: grid;">
-        <a class="btn btn-danger" href="#">Registrar en Bitacora</a>
+        <a class="btn btn-danger" href="{% url 'registerBinnacle' %}">Registrar en Bitacora</a>
         <br>
         <a class="btn btn-danger" href="#">Nueva Encomienda</a>
+        <br>
+        <a class="btn btn-danger" href="{% url 'registerRefuel' %}">Recarga de Combustible</a>
     </div>
-
+    {% endif %}
 
   </div>
 {% endblock %}

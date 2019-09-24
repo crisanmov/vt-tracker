@@ -36,15 +36,19 @@ class Vehicle(models.Model):
         return self.enrollment
 
 class Binnacle(models.Model):
+
+    ROUTES = (
+        ("Seleccion", "Selecciona una opción"),
+        ("Playa-Corporativo", "Playa del Carmen - Corporativo"),
+        ("Corporativo-Playa", "Corporativo - Playa del Carmen")
+    )
+
     id_binacle = models.AutoField(primary_key=True)
-    route = models.CharField(max_length=50, blank=False, null=False)
+    route = models.CharField(max_length=50, choices=ROUTES, default='Seleccion')
     start_kilometer = models.FloatField(blank=False, null=False)
     end_kilometer = models.FloatField(blank=False, null=False)
-    start_fuel = models.FloatField(blank=False, null=False)
-    end_fuel = models.FloatField(blank=False, null=False)
     start_datetime = models.DateTimeField(max_length=6, blank = False, null=False)
     end_datetime = models.DateTimeField(max_length=6, blank = False, null=False)
-    fuel_voucher = models.CharField(max_length=200, blank=True, null=True)
     created_at = models.DateTimeField(max_length=6, blank = False, null=False)
 
     #Relationship DB
@@ -54,8 +58,8 @@ class Binnacle(models.Model):
                         'route',
                          'start_kilometer',
                          'end_kilometer',
-                         'start_fuel',
-                         'end_fuel',
+                         #'start_fuel',
+                         #'end_fuel',
                          'start_datetime',
                          'end_datetime',
                     ]
@@ -68,20 +72,40 @@ class Binnacle(models.Model):
     def __str__(self):
         return self.id_binacle
 
+class Refuel(models.Model):
+    id_refuel = models.AutoField(primary_key=True)
+    liters = models.FloatField(max_length=50, blank=False)
+    amount = models.FloatField(max_length=50, blank=False)
+    datetime = models.DateTimeField(max_length=6, blank = False, null=False)
+    image = models.CharField(max_length=200, blank=False)
+
+    REQUIRED_FIELDS = ['id_refuel', 'liters', 'amount', 'datetime', 'image']
+
+    class Meta:
+        verbose_name = _('recarga')
+        verbose_name_plural = _('recargas')
+        db_table = ('refuel')
+
+    def __str__(self):
+        return self.name
+
 class Driver(models.Model):
     id_driver = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, blank=False)
     is_active = models.BooleanField(default=False)
 
-    #Relationship DB
+    #Relationship DB OneToOneField
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='user'
     )
 
-    binnacles = models.ManyToManyField('Binnacle', through='DriverBinacleService', related_name='idBinnacle')
-    services = models.ManyToManyField('Service', through='DriverBinacleService', related_name='idBinnacle')
+    #Relationship DB ManyToManyFields
+    binnacles = models.ManyToManyField('Binnacle', through='DriverBinacle', related_name='driverBinacle')
+    services = models.ManyToManyField('Service', through='DriverService', related_name='driverService')
+    refuels = models.ManyToManyField('Refuel', through='DriverRefuel', related_name='driverRefuel')
+
 
     REQUIRED_FIELDS = ['id_driver', 'name']
 
@@ -93,16 +117,41 @@ class Driver(models.Model):
     def __str__(self):
         return self.name
 
-class DriverBinacleService(models.Model):
+class DriverBinacle(models.Model):
     driver = models.ForeignKey('Driver', on_delete=models.CASCADE)
     binnacle = models.ForeignKey('Binnacle', on_delete=models.CASCADE)
+    date_joined= models.DateTimeField(max_length=6, blank = True)
+
+    REQUIRED_FIELDS = ['driver_id', 'binnacle_id', 'date_joined']
+
+    class Meta:
+        db_table = ('DriverBinacle')
+
+    def __str__(self):
+        return "binnacle: %s belongs to driver: %s" % (self.binnacle_id, self.driver_id)
+
+class DriverService(models.Model):
+    driver = models.ForeignKey('Driver', on_delete=models.CASCADE)
     service = models.ForeignKey('Service', on_delete=models.CASCADE)
     date_joined= models.DateTimeField(max_length=6, blank = True)
 
-    REQUIRED_FIELDS = ['driver_id', 'binnacle_id', 'service_id', 'date_joined']
+    REQUIRED_FIELDS = ['driver_id', 'service_id', 'date_joined']
 
     class Meta:
-        db_table = ('DriverBinacleService')
+        db_table = ('DriverService')
 
     def __str__(self):
-        return "binnacle: %s belongs to driver: %s" % (self.binnacle_id, self.service_id)
+        return "the service: %s was performed by driver: %s" % (self.binnacle_id, self.driver_id)
+
+class DriverRefuel(models.Model):
+    driver = models.ForeignKey('Driver', on_delete=models.CASCADE)
+    refuel = models.ForeignKey('Refuel', on_delete=models.CASCADE)
+    date_joined= models.DateTimeField(max_length=6, blank = True)
+
+    REQUIRED_FIELDS = ['driver_id', 'refuel_id', 'date_joined']
+
+    class Meta:
+        db_table = ('DriverRefuel')
+
+    def __str__(self):
+        return "the driver: %s realized the refuel: %s" % (self.driver_id, self.refuel_id)

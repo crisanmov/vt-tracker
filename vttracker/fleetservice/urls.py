@@ -10,4 +10,8 @@ urlpatterns = [
     url(r'^get_vehicles/$', views.getVehicles, name='getVehicles'),
     url(r'^create_driver/$', views.createDriver, name='createDriver'),
     url(r'^create_vehicle/$', views.createVehicle, name='createVehicle'),
+    url(r'^register_binnacle/$', views.registerBinnacle, name='registerBinnacle'),
+    url(r'^register_refuel/$', views.registerRefuel, name='registerRefuel'),
+    url(r'^register_service/$', views.registerService, name='registerService'),
+
 ]

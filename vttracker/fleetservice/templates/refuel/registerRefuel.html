@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>VTtracker Registrar Recarca Combustible</title>
+<style>
+  .content-binnacle{
+    width: 350px;
+  }
+</style>
+{% endblock %}
+{% block body %}
+<div class="container">
+  <div class="content-binnacle">
+    <h5>Recarga de Combustible</h5>
+    <br>
+    <form class="formRefuel" method="post" id="formSaveRefuel" action="{% url 'registerRefuel'  %}">
+      {% csrf_token %}
+      <div class="form-group">
+        {{form.liters.label_tag}}
+        {{form.liters}}
+      </div>
+      <div class="form-group">
+        {{form.amount.label_tag}}
+        {{form.amount}}
+      </div>
+      <div class="form-group">
+        {{form.datetime.label_tag}}
+        {{form.datetime}}
+      </div>
+      <div class="form-group">
+        {{form.image.label_tag}}
+        {{form.image}}
+      </div>
+      <br>
+      <div class="btnSaveRefuel">
+        <button class="btn btn-info" type="submit" id="btnSaveRefuel">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+amount
+datetime
+image
