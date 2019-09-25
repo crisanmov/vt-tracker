@@ -22,8 +22,8 @@ class BinnacleForm(forms.ModelForm):
             'route': 'Ruta:',
             'start_kilometer': 'Km Inicial:',
             'end_kilometer': 'Km Final:',
-            'start_datetime': 'Fecha de Inicio:',
-            'end_datetime': 'Fecha Fin:',
+            'start_datetime': 'Fecha de Inicio (dd/mm/yyyy):',
+            'end_datetime': 'Fecha Fin (dd/mm/yyyy):',
             'fuel_voucher': 'Voucher de Combustible',
         }
 
@@ -45,7 +45,7 @@ class BinnacleForm(forms.ModelForm):
         binnacle.start_datetime = self.cleaned_data['start_datetime']
         binnacle.end_datetime = self.cleaned_data['end_datetime']
         binnacle.created_at = timezone.now()
-        
+
         if commit:
             binnacle.save()
 
@@ -65,7 +65,7 @@ class RefuelForm(forms.ModelForm):
         labels = {
             'liters': 'Litros:',
             'amount': 'Importe:',
-            'datetime': 'Fecha',
+            'datetime': 'Fecha: (dd/mm/yyyy)',
             'image': 'Archivo Adjunto:',
         }
 
@@ -107,7 +107,7 @@ class ServiceForm(forms.ModelForm):
             'from_depto': 'Departamento:',
             'start_kilometer': 'Km Inicial:',
             'end_kilometer': 'Km Final:',
-            'datetime': 'Fecha:',
+            'datetime': 'Fecha (dd/mm/yyyy):',
             'description': 'Descripción',
         }
 
@@ -129,3 +129,8 @@ class ServiceForm(forms.ModelForm):
         service.image = self.cleaned_data['end_kilometer']
         service.datetime = self.cleaned_data['datetime']
         service.image = self.cleaned_data['description']
+
+        if commit:
+            service.save()
+
+        return service

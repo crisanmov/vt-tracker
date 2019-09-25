@@ -46,4 +46,53 @@
     </form>
   </div>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+
+  var $j = jQuery.noConflict();
+
+  function jsonFormat(formArray) {
+    let returnArray = {};
+    for (let i=0;i<formArray.length;i++) {
+        if (formArray[i].value) {
+            returnArray[formArray[i].name] = formArray[i].value;
+        }
+    }
+    return returnArray;
+  }
+
+  function saveService(formData){
+    let form = $j('#formSaveService');
+
+    $j.ajax({
+      type: form.attr('method'),
+      url: form.attr('action'),
+      data: formData,
+      success: function(response){
+        console.log(response);
+        if(response.status){
+          alert(response.msg);
+        }
+      },
+      error: function(e){
+        console.log(e);
+      }
+    });
+  }
+
+  $j('#btnSaveservice').click(function(e){
+    e.preventDefault();
+
+    //validation
+    let form = $j('#formSaveService');
+    let formData = jsonFormat(form.serializeArray());
+    console.log(formData);
+
+    saveService(formData);
+  });
+
+
+
+</script>
+
 {% endblock %}
