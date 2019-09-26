@@ -26,12 +26,12 @@
           {{form.end_kilometer}}
         </div>
         <div class="form-group">
-          {{form.start_datetime.label_tag}}
-          {{form.start_datetime}}
+          {{form.start_time.label_tag}}
+          {{form.start_time}}
         </div>
         <div class="form-group">
-          {{form.end_datetime.label_tag}}
-          {{form.end_datetime}}
+          {{form.end_time.label_tag}}
+          {{form.end_time}}
         </div>
         <div class="form-group">
           <label for="vehicles">Vehiculo: </label>
@@ -46,11 +46,23 @@
       </form>
     </div>
   </div>
+  <script>
+    $('#input_starttime').pickatime({
+      // 12 or 24 hour
+      twelvehour: true,
+    });
+  </script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script>
 
     var $j = jQuery.noConflict();
+    changesTypesInput();
     getVehicles();
+
+    function changesTypesInput(){
+      $('#timeS').attr('type', 'time');
+      $('#timeE').attr('type', 'time');
+    }
 
     function jsonFormat(formArray) {
       let returnArray = {};

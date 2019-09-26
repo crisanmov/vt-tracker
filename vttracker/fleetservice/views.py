@@ -22,7 +22,12 @@ from fleetservice.models import (
 @login_required(login_url='/accounts/login/')
 def index(request):
     current_user = request.user
-    args = {'user': current_user, 'users': User.objects.all().filter(is_superuser=False)}
+    #users = User.objects.all().filter(is_superuser=False)
+    drivers =  Driver.objects.all().select_related('user')
+    args = {
+        'user': current_user,
+        'drivers': drivers,
+        }
     return render(request, 'home/index.html', args)
 
 @login_required(login_url='/accounts/login/')
@@ -36,6 +41,7 @@ def getDrivers(request):
     try:
         drivers = Driver.objects.all().select_related('user')
         list = []
+        #depth QuerySet
         for driver in drivers:
             list.append({
                 'pk': driver.pk,
@@ -59,6 +65,26 @@ def getDrivers(request):
         response_data['msgError'] = e
 
     response_data['msgError'] = "Error Run QuerySet Failed."
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@login_required(login_url='/accounts/login/')
+def getBinnacles(request):
+    response_data = {}
+
+    data = serializers.serialize('json', DriverBinacle.objects.all(), use_natural_foreign_keys=True)
+    response_data['status'] = True
+    response_data['data'] = data
+    response_data['msg'] = "QuerySet Status::Done"
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@login_required(login_url='/accounts/login/')
+def getServices(request):
+    response_data = {}
+
+    data = serializers.serialize('json', DriverService.objects.all(), use_natural_foreign_keys=True)
+    response_data['status'] = True
+    response_data['data'] = data
+    response_data['msg'] = "QuerySet Status::Done"
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @login_required(login_url='/accounts/login/')

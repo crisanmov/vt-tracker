@@ -88,6 +88,24 @@
     <hr>
     <div class="" id="content_service">
 
+      <!--Elements for binnacles-->
+      <div class="" id="elemBinnacles" style="display: none">
+        <h4>Bitacora</h4>
+        <br>
+        <!--<a style="width: 20%;" class="btn btn-success" id ="btnNewDriver" data-toggle="modal">Nuevo Conductor</a><br>-->
+        <table class="table table-striped">
+          <tr>
+            <th scope="col"># ID</th>
+            <th scope="col">Ruta</th>
+            <th scope="col">Hora de inicio</th>
+            <th scope="col">Hora fin</th>
+            <th scope="col">Vehiculo</th>
+            <th scope="col">Conductor</th>
+            <th scope="col"></th>
+          </tr>
+          <tbody id="tbodyBinnacle"></tbody>
+        </table>
+      </div>
 
       <!--Elements for drivers-->
       <div class="" id="elemDrivers" style="display: none">
@@ -104,6 +122,25 @@
             <th scope="col"></th>
           </tr>
           <tbody id="tbodyDriver"></tbody>
+        </table>
+      </div>
+
+      <!--Elements for services-->
+      <div class="" id="elemServices" style="display: none">
+        <h4>Encomiendas</h4>
+        <br>
+        <table class="table table-striped">
+          <tr>
+            <th scope="col"># ID</th>
+            <th scope="col">Asunto</th>
+            <th scope="col">Solicitante</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Hora inicio</th>
+            <th scope="col">Hora fin</th>
+            <th scope="col">Conductor</th>
+            <th scope="col">Description</th>
+          </tr>
+          <tbody id="tbodyServices"></tbody>
         </table>
       </div>
 
@@ -200,11 +237,17 @@
     });
 
     $j('#binnacle').click(function(){
-      setColorSelect($(this));
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+      getBinnacles();
     });
 
     $j('#partialService').click(function(){
-      setColorSelect($(this));
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+      getServices();
     });
 
     $j('#vehicle').click(function(){
@@ -300,12 +343,24 @@
       }
     }
 
+    function jsonFormat(formArray) {
+      let returnArray = {};
+      for (let i=0;i<formArray.length;i++) {
+          if (formArray[i].value) {
+              returnArray[formArray[i].name] = formArray[i].value;
+          }
+      }
+      return returnArray;
+    }
+
     function cleanContentServices(service){
 
       let idService = service.attr('id');
       let content_services = {
         "driver": "elemDrivers",
         "vehicle": "elemVehicles",
+        "binnacle": "elemBinnacles",
+        "partialService": "elemServices",
       };
 
       for(service in content_services){
@@ -313,13 +368,6 @@
           let idElements = content_services[service];
           document.querySelector("#" + idElements).style.display = "none";
         }
-      }
-
-      let content_service = document.querySelector('#content_service');
-
-
-      if(content_service.hasChildNodes()){
-        //content_service.innerHTML="";
       }
     }
 
@@ -406,14 +454,91 @@
 
     }
 
-    function jsonFormat(formArray) {
-      let returnArray = {};
-      for (let i=0;i<formArray.length;i++) {
-          if (formArray[i].value) {
-              returnArray[formArray[i].name] = formArray[i].value;
+    function getBinnacles(){
+
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'getBinnacles' %}",
+        success: function(response){
+          console.log(response);
+          if(response.status){
+            let data = JSON.parse(response.data);
+
+            let tbodyBinnacle = document.querySelector('#tbodyBinnacle');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+              //console.log(data[i]);
+              let pk = data[i].pk;
+              let route = data[i].fields.binnacle.route;
+              let start_time = data[i].fields.binnacle.start_time;
+              let end_time = data[i].fields.binnacle.end_time;
+              let vehicle = data[i].fields.binnacle.vehicle.alias;
+              let driver = data[i].fields.driver.name;
+
+              content += "<tr><td>" + pk +
+                "</td><td>" + route +
+                "</td><td>"  + start_time +
+                "</td><td>" + end_time +
+                "</td><td>" + vehicle +
+                "</td><td>" + driver + "</td></tr>";
+            }
+
+            tbodyBinnacle.innerHTML = content;
+            document.querySelector('#elemBinnacles').style.display = "block";
+          }else{
+            alert(response.msgError);
           }
-      }
-      return returnArray;
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+
+    }
+
+    function getServices(){
+
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'getServices' %}",
+        success: function(response){
+          if(response.status){
+            let data = JSON.parse(response.data);
+            let tbodyServices = document.querySelector('#tbodyServices');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+              //console.log(data[i]);
+              let pk = data[i].pk;
+              let subject = data[i].fields.service.subject;
+              let from_depto = data[i].fields.service.from_depto;
+              let datetime = data[i].fields.service.datetime.slice(0,10);
+              let start_time = data[i].fields.service.start_time;
+              let end_time = data[i].fields.service.end_time;
+              let driver = data[i].fields.driver.name;
+              let description = data[i].fields.service.description;
+
+              content += "<tr><td>" + pk +
+                "</td><td>" + subject +
+                "</td><td>"  + from_depto +
+                "</td><td>" + datetime +
+                "</td><td>" + start_time +
+                "</td><td>" + end_time +
+                "</td><td>" + driver +
+                "</td><td>" + description + "</td></tr>";
+            }
+
+            tbodyServices.innerHTML = content;
+            document.querySelector('#elemServices').style.display = "block";
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
     }
 
     function saveDriver(driver){

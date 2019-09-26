@@ -9,9 +9,13 @@ class Service(models.Model):
     start_kilometer = models.FloatField(blank=False, null=True)
     end_kilometer = models.FloatField(blank=False, null=True)
     datetime = models.DateTimeField(max_length=6, blank = False, null=True)
+    start_time = models.TimeField(max_length=6, blank = False, null=False)
+    end_time = models.TimeField(max_length=6, blank = False, null=False)
     description = models.CharField(max_length=160, blank=False, null=False)
 
-    REQUIRED_FIELDS = ['id_service', 'subject', 'from_depto', 'datetime', 'description']
+    REQUIRED_FIELDS = ['id_service', 'subject', 'from_depto',
+                        'start_kilometer', 'end_kilometer', 'datetime',
+                        'start_time', 'end_time', 'description']
 
     class Meta:
         verbose_name = _('servicio')
@@ -20,6 +24,20 @@ class Service(models.Model):
 
     def __str__(self):
         return self.id_service
+
+    def natural_key(self):
+        object = {
+            "pk": self.id_service,
+            "subject": self.subject,
+            "from_depto": self.from_depto,
+            "start_kilometer": self.start_kilometer,
+            "end_kilometer": self.end_kilometer,
+            'datetime': self.datetime,
+            'start_time': self.start_time,
+            'end_time': self.end_time,
+            'description': self.description,
+            }
+        return object
 
 class Vehicle(models.Model):
     id_vehicle = models.AutoField(primary_key=True)
@@ -37,6 +55,15 @@ class Vehicle(models.Model):
     def __str__(self):
         return self.enrollment
 
+    def natural_key(self):
+        object = {
+            "pk": self.id_vehicle,
+            "name": self.alias,
+            "enrollment": self.enrollment,
+            "data_service": self.data_service,
+            }
+        return object
+
 class Binnacle(models.Model):
 
     ROUTES = (
@@ -49,14 +76,14 @@ class Binnacle(models.Model):
     route = models.CharField(max_length=50, choices=ROUTES, default='Seleccion')
     start_kilometer = models.FloatField(blank=False, null=False)
     end_kilometer = models.FloatField(blank=False, null=False)
-    start_datetime = models.DateTimeField(max_length=6, blank = False, null=False)
-    end_datetime = models.DateTimeField(max_length=6, blank = False, null=False)
+    start_time = models.TimeField(max_length=6, blank = False, null=False)
+    end_time = models.TimeField(max_length=6, blank = False, null=False)
     created_at = models.DateTimeField(max_length=6, blank = False, null=False)
 
     #Relationship DB
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
 
-    REQUIRED_FIELDS = ['id_binacle', 'route', 'start_kilometer','end_kilometer', 'start_datetime', 'end_datetime']
+    REQUIRED_FIELDS = ['id_binacle', 'route', 'start_kilometer','end_kilometer', 'start_time', 'end_time']
 
     class Meta:
         verbose_name = _('bitacora')
@@ -65,6 +92,22 @@ class Binnacle(models.Model):
 
     def __str__(self):
         return self.id_binacle
+
+    def natural_key(self):
+        object = {
+            'pk': self.id_binacle,
+            'route': self.route,
+            'start_kilometer': self.start_kilometer,
+            'end_kilometer': self.end_kilometer,
+            'start_time': self.start_time,
+            'end_time': self.end_time,
+            'created_at': self.created_at,
+            'vehicle': {
+                    'pk': self.vehicle.id_vehicle,
+                    'alias': self.vehicle.alias,
+                }
+            }
+        return object
 
 class Refuel(models.Model):
     id_refuel = models.AutoField(primary_key=True)
@@ -100,7 +143,6 @@ class Driver(models.Model):
     services = models.ManyToManyField('Service', through='DriverService', related_name='driverService')
     refuels = models.ManyToManyField('Refuel', through='DriverRefuel', related_name='driverRefuel')
 
-
     REQUIRED_FIELDS = ['id_driver', 'name']
 
     class Meta:
@@ -110,6 +152,18 @@ class Driver(models.Model):
 
     def __str__(self):
         return self.name
+
+    def natural_key(self):
+        object = {
+            "pk": self.id_driver,
+            "name": self.name,
+            "is_active": self.is_active,
+            "user": {
+                    "pk": self.user.id,
+                    "fullname": self.user.name + self.user.lastP + self.user.lastM,
+                }
+            }
+        return object
 
 class DriverBinacle(models.Model):
     driver = models.ForeignKey('Driver', on_delete=models.CASCADE)

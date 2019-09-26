@@ -14,16 +14,16 @@ class BinnacleForm(forms.ModelForm):
             'route',
             'start_kilometer',
             'end_kilometer',
-            'start_datetime',
-            'end_datetime',
+            'start_time',
+            'end_time',
         )
 
         labels = {
             'route': 'Ruta:',
             'start_kilometer': 'Km Inicial:',
             'end_kilometer': 'Km Final:',
-            'start_datetime': 'Fecha de Inicio (dd/mm/yyyy):',
-            'end_datetime': 'Fecha Fin (dd/mm/yyyy):',
+            'start_time': 'Hora de Inicio (HH:MM):',
+            'end_time': 'Hora de Fin (HH:MM):',
             'fuel_voucher': 'Voucher de Combustible',
         }
 
@@ -31,8 +31,8 @@ class BinnacleForm(forms.ModelForm):
             'route': forms.Select(attrs={'class': 'validate form-control'}),
             'start_kilometer': forms.TextInput(attrs={'class': 'validate form-control'}),
             'end_kilometer': forms.TextInput(attrs={'class': 'validate form-control'}),
-            'start_datetime': forms.DateInput(format='%d/%m/%Y', attrs={'id': 'datepickerS', 'class':'validate form-control'}),
-            'end_datetime': forms.DateInput(format='%d/%m/%Y', attrs={'id': 'datepickerE', 'class':'validate form-control'}),
+            'start_time': forms.TimeInput(format='%H:%M', attrs={'id': 'timeS', 'class':'validate form-control'}),
+            'end_time': forms.TimeInput(attrs={'id': 'timeE', 'class':'validate form-control'}),
             'fuel_voucher': forms.TextInput(attrs={'class': 'validate form-control'}),
         }
 
@@ -42,8 +42,8 @@ class BinnacleForm(forms.ModelForm):
         binnacle.route = self.cleaned_data['route']
         binnacle.start_kilometer = self.cleaned_data['start_kilometer']
         binnacle.end_kilometer = self.cleaned_data['end_kilometer']
-        binnacle.start_datetime = self.cleaned_data['start_datetime']
-        binnacle.end_datetime = self.cleaned_data['end_datetime']
+        binnacle.start_time = self.cleaned_data['start_time']
+        binnacle.end_time = self.cleaned_data['end_time']
         binnacle.created_at = timezone.now()
 
         if commit:
@@ -73,7 +73,7 @@ class RefuelForm(forms.ModelForm):
             'liters': forms.TextInput(attrs={'class': 'validate form-control'}),
             'amount': forms.TextInput(attrs={'class': 'validate form-control'}),
             'datetime': forms.DateInput(format='%d/%m/%Y', attrs={'id': 'datepickerA', 'class':'validate form-control'}),
-            'image': forms.TextInput(attrs={'class': 'validate form-control'}),
+            'image': forms.FileInput(attrs={'class': 'validate form-control'}),
         }
 
     def save(self, commit=True):
@@ -99,6 +99,8 @@ class ServiceForm(forms.ModelForm):
             'start_kilometer',
             'end_kilometer',
             'datetime',
+            'start_time',
+            'end_time',
             'description',
         )
 
@@ -108,6 +110,8 @@ class ServiceForm(forms.ModelForm):
             'start_kilometer': 'Km Inicial:',
             'end_kilometer': 'Km Final:',
             'datetime': 'Fecha (dd/mm/yyyy):',
+            'start_time': 'Hora de Inicio (HH:MM):',
+            'end_time': 'Hora de Fin (HH:MM):',
             'description': 'Descripción',
         }
 
@@ -116,7 +120,9 @@ class ServiceForm(forms.ModelForm):
             'from_depto': forms.TextInput(attrs={'class': 'validate form-control'}),
             'start_kilometer': forms.TextInput(attrs={'class': 'validate form-control'}),
             'end_kilometer': forms.TextInput(attrs={'class': 'validate form-control'}),
-            'datetime': forms.DateInput(format='%d/%m/%Y', attrs={'id': 'datepicker', 'class':'validate form-control'}),
+            'datetime': forms.DateInput(format='%d/%m/%Y', attrs={'id': 'datepickerS', 'class':'validate form-control'}),
+            'start_time': forms.TimeInput(attrs={'id': 'timeS', 'class':'validate form-control'}),
+            'end_time': forms.TimeInput(attrs={'id': 'timeE', 'class':'validate form-control'}),
             'description': forms.Textarea(attrs={'style': 'resize:none', 'class':'validate form-control'}),
         }
 
@@ -128,6 +134,8 @@ class ServiceForm(forms.ModelForm):
         service.datetime = self.cleaned_data['start_kilometer']
         service.image = self.cleaned_data['end_kilometer']
         service.datetime = self.cleaned_data['datetime']
+        service.start_time = self.cleaned_data['start_time']
+        service.end_time = self.cleaned_data['end_time']
         service.image = self.cleaned_data['description']
 
         if commit:
