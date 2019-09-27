@@ -28,6 +28,12 @@
         {{form.datetime}}
       </div>
       <div class="form-group">
+        <label for="vehicles">Vehiculo: </label>
+        <select class="form-control" id="vehiclesList">
+          <option value="0">Selecciona una opción</option>
+        </select>
+      </div>
+      <div class="form-group">
         {{form.image.label_tag}}
         {{form.image}}
       </div>
@@ -40,10 +46,11 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script>
-
-  $('#datepickerA').attr('type', 'date');
-
   var $j = jQuery.noConflict();
+
+  getVehicles();
+
+  $j('#datepickerA').attr('type', 'date');
 
   function jsonFormat(formArray) {
     let returnArray = {};
@@ -67,6 +74,36 @@
         if(response.status){
           alert(response.msg);
         }
+        else{
+          alert(response.errors);
+        }
+      },
+      error: function(e){
+        console.log(e);
+      }
+    });
+  }
+
+  function getVehicles(){
+    console.log("ssss");
+    $j.ajax({
+      type: 'GET',
+      url: "{% url 'getVehicles' %}",
+      success: function(response){
+        if(response.status){
+          let data = JSON.parse(response.data);
+          let vehiclesList = $('#vehiclesList');
+          for(let i=0; i<data.length; i++){
+            let vehicle = data[i].fields.alias;
+            let option = document.createElement('option');
+
+            option.text = vehicle;
+            option.setAttribute('value', data[i].pk);
+            vehiclesList.append(option);
+          }
+        }else{
+          alert(response.msgError);
+        }
       },
       error: function(e){
         console.log(e);
@@ -80,6 +117,10 @@
     //validation
     let form = $j('#formSaveRefuel');
     let formData = jsonFormat(form.serializeArray());
+    let vehiclesList = document.querySelector('#vehiclesList');
+    let vehicleSelected = vehiclesList.options[vehiclesList.selectedIndex].value;
+
+    formData['vehicle_id'] = vehicleSelected;
     console.log(formData);
 
     saveRefuel(formData);

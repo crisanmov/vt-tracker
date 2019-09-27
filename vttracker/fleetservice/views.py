@@ -15,6 +15,7 @@ from fleetservice.models import (
     Driver,
     Vehicle,
     Binnacle,
+    Refuel,
     DriverBinacle,
     DriverService,
     DriverRefuel,)
@@ -39,10 +40,11 @@ def getDrivers(request):
     response_data = {}
 
     try:
-        drivers = Driver.objects.all().select_related('user')
-        list = []
+        data = serializers.serialize('json', Driver.objects.all().select_related('user'), use_natural_foreign_keys=True)
+        #drivers = Driver.objects.all().select_related('user')
+        #list = []
         #depth QuerySet
-        for driver in drivers:
+        """for driver in drivers:
             list.append({
                 'pk': driver.pk,
                 'username': driver.user.username,
@@ -50,10 +52,10 @@ def getDrivers(request):
                 'alias': driver.name,
                 'email': driver.user.email,
                 'is_active': driver.is_active,
-            })
+            })"""
 
         response_data['status'] = True
-        response_data['data'] = list
+        response_data['data'] = data
         response_data['msg'] = "QuerySet Status::Done"
         return HttpResponse(json.dumps(response_data), content_type="application/json")
     except ObjectDoesNotExist as e:
@@ -101,10 +103,15 @@ def getVehicles(request):
 def getUsers(resquest):
     response_data = {}
     try:
-        data = serializers.serialize('json', User.objects.filter(is_superuser=False, is_active=True), fields=('name', 'lastP', 'lastM'))
+        data = serializers.serialize('json', User.objects.filter(
+        is_superuser=False,
+        is_active=True),
+        fields=('name', 'lastP', 'lastM', 'email', 'phone', 'address'))
+
         response_data['status'] = True
         response_data['data'] = data
         response_data['msg'] = "QuerySet Status::Done"
+
         return HttpResponse(json.dumps(response_data), content_type="application/json")
     except ObjectDoesNotExist as e:
         response_data['status'] = False
@@ -118,17 +125,37 @@ def getUsers(resquest):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @login_required(login_url='/accounts/login/')
+def getRefuels(requests):
+    response_data = {}
+
+    data = serializers.serialize('json', Refuel.objects.all(), use_natural_foreign_keys=True)
+    response_data['status'] = True
+    response_data['data'] = data
+    response_data['msg'] = "QuerySet Status::Done"
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@login_required(login_url='/accounts/login/')
 def createDriver(request):
     response_data = {}
 
     try:
         user = User.objects.get(pk=request.POST.get('idUser'))
-        Driver.objects.create(name=request.POST.get('alias'), user=user, is_active=True)
+
+        Driver.objects.create(
+            name=request.POST.get('alias'),
+            user=user,
+            is_active=True,
+            license_number=request.POST.get('license_number'),
+            license_expedition=request.POST.get('license_expedition'),
+            license_expiration=request.POST.get('license_expiration'),
+            )
+
         user.is_active = False
         user.save(update_fields=['is_active'])
 
         response_data['status'] = True
         response_data['msg'] = "Conductor se creo correctamente."
+
         return HttpResponse(json.dumps(response_data), content_type="application/json")
     except Exception as e:
         response_data['status'] = False
@@ -196,6 +223,7 @@ def registerRefuel(request):
 
         if form.is_valid():
             refuel = form.save(commit=False)
+            refuel.vehicle = Vehicle.objects.get(pk=request.POST.get('vehicle_id'))
             refuel.save()
             #***************save relation m2m*****************
             driver = Driver.objects.get(user=request.user.pk)

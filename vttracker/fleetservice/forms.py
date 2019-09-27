@@ -73,7 +73,8 @@ class RefuelForm(forms.ModelForm):
             'liters': forms.TextInput(attrs={'class': 'validate form-control'}),
             'amount': forms.TextInput(attrs={'class': 'validate form-control'}),
             'datetime': forms.DateInput(format='%d/%m/%Y', attrs={'id': 'datepickerA', 'class':'validate form-control'}),
-            'image': forms.FileInput(attrs={'class': 'validate form-control'}),
+            #'image': forms.FileInput(attrs={'class': 'validate form-control'}),
+            'image': forms.TextInput(attrs={'class': 'validate form-control'}),
         }
 
     def save(self, commit=True):

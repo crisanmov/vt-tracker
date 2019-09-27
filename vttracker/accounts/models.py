@@ -50,3 +50,11 @@ class User(AbstractBaseUser):
 		verbose_name = _('user')
 		verbose_name_plural = _('users')
 		db_table = ('user')
+
+	def natural_key(self):
+		object = {
+		    "pk": self.id,
+		    "name": self.name + " " + self.lastP + " " + self.lastM,
+			'phone': self.phone,
+		    }
+		return object

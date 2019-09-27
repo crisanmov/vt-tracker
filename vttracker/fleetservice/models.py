@@ -116,6 +116,11 @@ class Refuel(models.Model):
     datetime = models.DateTimeField(max_length=6, blank = False, null=False)
     image = models.CharField(max_length=200, blank=False)
 
+    #Relationship DB OneToOneField
+    vehicle = models.OneToOneField(Vehicle, on_delete=models.CASCADE,
+        related_name='user'
+    )
+
     REQUIRED_FIELDS = ['id_refuel', 'liters', 'amount', 'datetime', 'image']
 
     class Meta:
@@ -129,6 +134,9 @@ class Refuel(models.Model):
 class Driver(models.Model):
     id_driver = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, blank=False)
+    license_number = models.CharField(max_length=50, blank=False)
+    license_expedition = models.DateTimeField(max_length=6, blank = False)
+    license_expiration = models.DateTimeField(max_length=6, blank = False)
     is_active = models.BooleanField(default=False)
 
     #Relationship DB OneToOneField
@@ -143,7 +151,7 @@ class Driver(models.Model):
     services = models.ManyToManyField('Service', through='DriverService', related_name='driverService')
     refuels = models.ManyToManyField('Refuel', through='DriverRefuel', related_name='driverRefuel')
 
-    REQUIRED_FIELDS = ['id_driver', 'name']
+    REQUIRED_FIELDS = ['id_driver', 'name', 'license_number', 'license_expedition', 'license_expiration']
 
     class Meta:
         verbose_name = _('conductor')

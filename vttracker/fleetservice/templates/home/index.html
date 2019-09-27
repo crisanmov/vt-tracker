@@ -1,40 +1,383 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<title>VTtracker Inicio</title>
+<title>Administrar Flotilla</title>
+<style>
+  .services-container{
+    display: flex;
+    //margin-top: 30px;
+    //margin-left: 20px
+  }
+  .service{
+    text-align: center;
+    border: 2px solid #179e0e;
+    margin: 5px;
+    transition: transform .2s !important; /* Animation */
+  }
+  .service:hover{
+    transform: scale(1.1);
+    cursor: pointer;
+  }
+  .card img{
+    width: 50px;
+    height: 44px;
+  }
+  .card{
+    text-align: -webkit-center !important;
+    width: 140px !important;
+    border: none !important;
+  }
+
+  .form-perf{
+    width: 30%;
+    margin: 5px;
+  }
+</style>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 {% endblock %}
 {% block body %}
 <div class="" style="margin-top: 5px;">
   <h5>Bienvenido! {{user.username}} a VT-Tracker</h5>
 </div>
   <div class="container">
-    <br>
     {% if user.is_superuser %}
-      <a class="btn btn-success" href="{% url 'register' %}">Nuevo Usuario</a><br>
-      <br>
-      <h4>Flotilla Asignada</h4>
-      <br>
-      <table class="table table-striped">
-        <tr>
-          <th scope="col"># ID</th>
-          <th scope="col">Username</th>
-          <th scope="col">Nombre</th>
-          <th scope="col">Email</th>
-          <th scope="col"></th>
-          <!--<th class = "table-success"></th>
-          <th class = "table-success"></th>
-          <th class = "table-success"></th>-->
-        </tr>
-      {% for field in drivers %}
-      <tr>
-        <td>{{field.user.id}}</td>
-        <td>{{field.user.username}}</td>
-        <td>{{field.user.name}} {{field.user.lastP}} {{field.user.lastM}}</td>
-        <td>{{field.user.email}}</td>
-        <td><a href="#">Ver más</a></td>
-      </tr>
-      {% endfor %}
-      </table>
+      <div class="" style="margin: 0px;">
+        <!--<a href="javascript:history.back()">Regresar</a>-->
+        <h5 style="margin-top: 15px;">Servicios de Flotilla</h5>
+      </div>
+      <div class="" style="display: inline-flex;">
+
+        <div class="services-container">
+
+          <!--Usuarios-->
+          <div class="service" id="user">
+            <div class="card" style="width: 18rem;">
+              {% load static %}
+              <img src="{% static "images/usuario.jpg" %}" class="card-img-top" alt="user">
+            </div>
+            <div class="card-body">
+              <p class="card-text">Usuarios</p>
+            </div>
+          </div>
+
+          <!--Bitacora-->
+          <div class="service" id="binnacle">
+            <div class="card" style="width: 18rem;">
+              {% load static %}
+              <img src="{% static "images/bitacora.png" %}" class="card-img-top" alt="binnacle">
+            </div>
+            <div class="card-body">
+              <p class="card-text">Bitacora</p>
+            </div>
+          </div>
+
+          <!--Conductores-->
+          <div class="service" id="driver">
+            <div class="card" style="width: 18rem;">
+              {% load static %}
+              <img src="{% static "images/conductor.jpeg" %}" class="card-img-top" alt="driver">
+            </div>
+            <div class="card-body">
+              <p class="card-text">Conductores</p>
+            </div>
+          </div>
+
+          <!--Encomiendas-->
+          <div class="service" id="partialService">
+            <div class="card" style="width: 18rem;">
+              {% load static %}
+              <img src="{% static "images/encomienda.png" %}" class="card-img-top" alt="partialService">
+            </div>
+            <div class="card-body">
+              <p class="card-text">Encomiendas</p>
+            </div>
+          </div>
+
+          <!--Vehiculos-->
+          <div class="service" id="vehicle">
+            <div class="card" style="width: 18rem;">
+              {% load static %}
+              <img src="{% static "images/vehiculo.png" %}" class="card-img-top" alt="vehicle">
+            </div>
+            <div class="card-body">
+              <p class="card-text">Vehiculos</p>
+            </div>
+          </div>
+
+          <!--Recargas-->
+          <div class="service" id="refuel">
+            <div class="card" style="width: 18rem;">
+              {% load static %}
+              <img src="{% static "images/recarga2.png" %}" class="card-img-top" alt="refuel">
+            </div>
+            <div class="card-body">
+              <p class="card-text">Recargas</p>
+            </div>
+          </div>
+
+          <!--Rendimiento-->
+          <div class="service" id="performance">
+            <div class="card" style="width: 18rem;">
+              {% load static %}
+              <img src="{% static "images/rendimiento2.jpg" %}" class="card-img-top" alt="performance">
+            </div>
+            <div class="card-body">
+              <p class="card-text">Rendimiento</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <hr>
+      <div class="" id="content_service">
+        <!--Elements for binnacles-->
+        <div class="" id="elemBinnacles" style="display: none">
+          <h4>Bitacora</h4>
+          <div class="search-binnacle" style="display: flex;">
+            <div class="form-group form-perf">
+              <label for="vehicles">Fecha inicio: </label>
+              <select class="form-control" id="refuelList">
+                <option value="0">Selecciona una opción</option>
+              </select>
+            </div>
+            <div class="form-group form-perf">
+              <label for="vehicles">Fecha fin: </label>
+              <select class="form-control" id="refuelList">
+                <option value="0">Selecciona una opción</option>
+              </select>
+            </div>
+            <div class="form-group form-perf">
+              <label for="vehicles">Vehiculo: </label>
+              <select class="form-control" id="refuelList">
+                <option value="0">Selecciona una opción</option>
+              </select>
+            </div>
+            <div class="form-group form-perf">
+              <label for="vehicles"></label><br>
+              <a class="btn btn-success" href="#">Buscar</a>
+              <a class="btn btn-success" href="#">Exportar</a>
+            </div>
+          </div>
+          <!--<a style="width: 20%;" class="btn btn-success" id ="btnNewDriver" data-toggle="modal">Nuevo Conductor</a><br>-->
+          <table class="table table-striped">
+            <tr>
+              <th scope="col"># ID</th>
+              <th scope="col">Ruta</th>
+              <th scope="col">Hora de inicio</th>
+              <th scope="col">Hora fin</th>
+              <th scope="col">Vehiculo</th>
+              <th scope="col">Conductor</th>
+              <th scope="col"></th>
+            </tr>
+            <tbody id="tbodyBinnacle"></tbody>
+          </table>
+        </div>
+
+        <!--Elements for drivers-->
+        <div class="" id="elemDrivers" style="display: none">
+          <h4>Conductores Activos</h4>
+          <br>
+          <a style="width: 20%;" class="btn btn-success" id ="btnNewDriver" data-toggle="modal">Nuevo Conductor</a><br>
+          <table class="table table-striped">
+            <tr>
+              <th scope="col"># ID</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Numero de licencia</th>
+              <th scope="col">Fecha expedición</th>
+              <th scope="col">Fecha expiración</th>
+              <th scope="col">Telefono</th>
+              <th scope="col"></th>
+            </tr>
+            <tbody id="tbodyDriver"></tbody>
+          </table>
+        </div>
+
+        <!--Elements for services-->
+        <div class="" id="elemServices" style="display: none">
+          <h4>Encomiendas</h4>
+          <br>
+          <table class="table table-striped">
+            <tr>
+              <th scope="col"># ID</th>
+              <th scope="col">Asunto</th>
+              <th scope="col">Solicitante</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Hora inicio</th>
+              <th scope="col">Hora fin</th>
+              <th scope="col">Conductor</th>
+              <th scope="col">Description</th>
+            </tr>
+            <tbody id="tbodyServices"></tbody>
+          </table>
+        </div>
+
+        <!--Elements for Vehicles-->
+        <div class="" id="elemVehicles" style="display:none;">
+          <h4>Vehiculos Disponibles</h4>
+          <br>
+          <a style="display:none; width: 20%;" class="btn btn-success" id ="btnNewVehicle" data-toggle="modal">Nuevo Vehiculo</a>
+          <br>
+          <table class="table table-striped">
+            <tr>
+              <th scope="col"># ID</th>
+              <th scope="col">Matricula</th>
+              <th scope="col">Alias</th>
+              <th scope="col">Fecha de Servicio</th>
+              <th scope="col"></th>
+            </tr>
+            <tbody id="tbodyVehicle"></tbody>
+          </table>
+        </div>
+
+        <!--Elements for Refuel-->
+        <div class="" id="elemRefuel" style="display:none;">
+          <h4>Recargas de Combustible</h4>
+          <br>
+          <table class="table table-striped">
+            <tr>
+              <th scope="col"># ID</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Litros</th>
+              <th scope="col">Importe</th>
+              <th scope="col">Vehiculo</th>
+              <th scope="col">Comprobante</th>
+              <th scope="col"></th>
+            </tr>
+            <tbody id="tbodyRefuel"></tbody>
+          </table>
+        </div>
+
+        <!--Elements for Users-->
+        <div class="" id="elemUsers" style="display:none;">
+          <a class="btn btn-success" style="display:none; width:15%;" id ="btnNewUser" href="{% url 'register' %}">Nuevo Usuario</a><br>
+          <br>
+          <h4>Usuarios registrados</h4>
+          <br>
+          <table class="table table-striped">
+            <tr>
+              <th scope="col"># ID</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Email</th>
+              <th scope="col">Telefono</th>
+              <th scope="col">Dirección</th>
+              <th scope="col"></th>
+            </tr>
+            <tbody id="tbodyUser"></tbody>
+          </table>
+        </div>
+
+        <!--Elements for performance-->
+        <div class="" id="elemPerformance" style="display:none;">
+          <h4>Verificar rendimiento</h4>
+          <br>
+          <div class="form-performance" style="width: 100%; display:flex">
+            <div class="form-group form-perf">
+              <label for="vehicles">Vehiculo: </label>
+              <select class="form-control" id="vehiclesList">
+                <option value="0">Selecciona una opción</option>
+              </select>
+            </div>
+            <div class="form-group form-perf">
+              <label for="vehicles">Periodo de recarga: </label>
+              <select class="form-control" id="refuelList">
+                <option value="0">Selecciona una opción</option>
+              </select>
+            </div>
+
+            <div class="form-group form-perf">
+              <label for="vehicles"></label><br>
+              <a class="btn btn-success" href="#">Buscar</a>
+              <a class="btn btn-success" href="#">Exportar</a>
+            </div>
+          </div>
+          <br>
+          <h5>Resultados</h5><br>
+          <table class="table table-striped">
+            <tr>
+              <th scope="col">Vehiculo</th>
+              <th scope="col">Kilometros recorridos</th>
+              <th scope="col">Litros usados</th>
+              <th scope="col">Fechas</th>
+              <th scope="col"></th>
+            </tr>
+            <tbody id="tbodyPerformance"></tbody>
+          </table>
+        </div>
+
+        <!-- Modal Driver-->
+        <div class="modal fade" id="newDriver" tabindex="-1" role="dialog" aria-labelledby="newDriverLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="newDriverLabel">Asignar nuevo conductor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+              <form class="" id="formNewDriver" action="{% url 'createDriver' %}" method="post">
+                <div class="form-group">
+                  <label for="aliasDriver">Nombre o Alías: </label>
+                  <input type="text" class="form-control" id="aliasDriver" placeholder="Introduce un nombre o alías">
+                </div>
+                <div class="form-group">
+                  <label for="users">Usuarios disponibles: </label>
+                  <select class="form-control" id="usersList">
+                    <option value="0">Selecciona una opción</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="aliasDriver">Número de licencia: </label>
+                  <input type="text" class="form-control" id="license_number" placeholder="Introduce el número de licencia">
+                </div>
+                <div class="form-group">
+                  <label for="aliasDriver">Fecha de expedición: </label>
+                  <input type="date" class="form-control" id="license_expedition">
+                </div>
+                <div class="form-group">
+                  <label for="aliasDriver">Fecha de expiración: </label>
+                  <input type="date" class="form-control" id="license_expiration">
+                </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" id="btnSaveDriver" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Vehicle-->
+        <div class="modal fade" id="newVehicle" tabindex="-1" role="dialog" aria-labelledby="newVehicleLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="newVehicleLabel">Nuevo Vehiculo</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label for="placaVehicle">Número de placa: </label>
+                    <input type="text" class="form-control" id="placaVehicle" placeholder="Introduce el número de placa.">
+                  </div>
+                  <div class="form-group">
+                    <label for="aliasVehicle">Nombre o alías del vehiculo: </label>
+                    <input type="text" class="form-control" id="aliasVehicle" placeholder="Introduce el nombre o alías del vehiculo.">
+                  </div>
+                  <div class="form-group">
+                    <label for="dateServiceVehicle">Fecha de servicio: </label>
+                    <input type="date" class="form-control" id="dateServiceVehicle" max="3000-12-31" min="2015-01-01" placeholder="Introduce la ultima fecha de servicio al vehiculo.">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" id="btnSaveVehicle" class="btn btn-primary">Guardar</button>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     {% endif %}
     {% if not user.is_superuser %}
     <div class="actionsDriver" style="display: grid;">
@@ -47,4 +390,479 @@
     {% endif %}
 
   </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+
+    var $j = jQuery.noConflict();
+
+    //#############services#######################
+    $j('#driver').click(function(){
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+      getDrivers();
+    });
+
+    $j('#binnacle').click(function(){
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+      getBinnacles();
+    });
+
+    $j('#partialService').click(function(){
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+      getServices();
+    });
+
+    $j('#vehicle').click(function(){
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+      getVehicles();
+
+    });
+
+    $j('#user').click(function(){
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+      getUsers();
+    });
+
+    $j('#refuel').click(function(){
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+      getRefuels();
+    });
+
+    $j('#performance').click(function(){
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+
+      document.querySelector('#elemPerformance').style.display = "block";
+    });
+
+    $j('#btnNewDriver').click(function(e){
+      e.preventDefault();
+
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'getUsers' %}",
+        success: function(response){
+          if(response.status){
+            let data = JSON.parse(response.data);
+            let usersList = $('#usersList');
+
+            for(let i=0; i<data.length; i++){
+              let fullname = data[i].fields.name + " " + data[i].fields.lastP + " " + data[i].fields.lastM;
+              let idUser = data[i].pk;
+              let option = document.createElement('option');
+
+              option.text = fullname;
+              option.setAttribute('value', idUser);
+              usersList.append(option);
+            }
+            //show Modal
+            $('#newDriver').modal('show');
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+
+
+    });
+
+    $j('#btnNewVehicle').click(function(e){
+      //show Modal
+      $('#newVehicle').modal('show');
+    });
+
+    $j('#btnSaveDriver').click(function(e){
+      e.preventDefault();
+      //validation
+
+      let usersList = document.querySelector('#usersList');
+
+      let driver = {
+        'alias': document.querySelector('#aliasDriver').value,
+        'fullname': usersList.options[usersList.selectedIndex].text,
+        'idUser': usersList.options[usersList.selectedIndex].value,
+        'license_number': document.querySelector('#license_number').value,
+        'license_expedition': document.querySelector('#license_expedition').value,
+        'license_expiration': document.querySelector('#license_expiration').value,
+        'csrfmiddlewaretoken': '{{ csrf_token }}',
+      };
+
+      saveDriver(driver);
+
+    });
+
+    $j('#btnSaveVehicle').click(function(e){
+      e.preventDefault();
+      //validation
+
+      let vehicle = {
+        'enrollment': document.querySelector('#placaVehicle').value,
+        'name': document.querySelector('#aliasVehicle').value,
+        'date_service': document.querySelector('#dateServiceVehicle').value,
+        'csrfmiddlewaretoken': '{{ csrf_token }}',
+      };
+
+      saveVehicle(vehicle);
+
+    });
+
+    //#################utils#######################
+    function setColorSelect(service) {
+        service.css('backgroundColor','#49a746');
+        clearStyle(service.attr('id'));
+    }
+
+    function clearStyle(service){
+      //services = list of id's for each div that contain one service
+      let services = ['binnacle', 'driver', 'partialService', 'vehicle', 'user', 'refuel', 'performance'];
+      for(let i=0; i<services.length; i++){
+        if(services[i] != $j('#' + service).attr('id')){
+          $j('#' + services[i]).css('backgroundColor','');
+        }
+      }
+    }
+
+    function jsonFormat(formArray) {
+      let returnArray = {};
+      for (let i=0;i<formArray.length;i++) {
+          if (formArray[i].value) {
+              returnArray[formArray[i].name] = formArray[i].value;
+          }
+      }
+      return returnArray;
+    }
+
+    function cleanContentServices(service){
+
+      let idService = service.attr('id');
+      //object key= btn_event, value = div_id
+      let content_services = {
+        "driver": "elemDrivers",
+        "vehicle": "elemVehicles",
+        "binnacle": "elemBinnacles",
+        "partialService": "elemServices",
+        "refuel": "elemRefuel",
+        "user": "elemUsers",
+        "performance": "elemPerformance",
+      };
+
+      for(service in content_services){
+        if(service != idService){
+          let idElements = content_services[service];
+          document.querySelector("#" + idElements).style.display = "none";
+        }
+      }
+    }
+
+    //#################funcionts for modal#######################
+
+    function saveDriver(driver){
+      let form = $('#formNewDriver');
+      $j.ajax({
+        data: driver,
+        type: form.attr('method'),
+        url: form.attr('action'),
+        success: function(response){
+          console.log(response);
+          getDrivers();
+          $('#newDriver').modal('hide');
+        },
+        error: function(response){
+
+        }
+
+      });
+    }
+
+    function saveVehicle(vehicle){
+      $j.ajax({
+        data: vehicle,
+        type: "POST",
+        url: "{% url 'createVehicle' %}",
+        success: function(response){
+          console.log(response);
+          $('#newVehicle').modal('hide');
+          getVehicles()
+        },
+        error: function(response){
+
+        }
+
+      });
+    }
+
+    //###############AJAX Functions##################
+    function getDrivers(){
+
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'getDrivers' %}",
+        success: function(response){
+          //console.log(response);
+          if(response.status){
+            let data = JSON.parse(response.data);
+            console.log(data);
+
+            let tbodyDriver = document.querySelector('#tbodyDriver');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+
+              let pk = data[i].pk;
+              let fullname = data[i].fields.user.name;
+              let license_number = data[i].fields.license_number;
+              let license_expedition = data[i].fields.license_expedition;
+              let license_expiration = data[i].fields.license_expiration;
+              let phone = data[i].fields.user.phone;
+
+              content += "<tr><td>" + pk +
+                "</td><td>" + fullname +
+                "</td><td>"  + license_number +
+                "</td><td>" + license_expedition +
+                  "</td><td>" + license_expiration +
+                "</td><td>" + phone + "</td></tr>";
+            }
+
+            tbodyDriver.innerHTML = content;
+            document.querySelector('#elemDrivers').style.display = "block";
+            document.querySelector('#btnNewDriver').style.display = "block";
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+    }
+
+    function getVehicles(){
+
+      $j.ajax({
+        type: "GET",
+        url: "{% url 'getVehicles' %}",
+        success: function(response){
+          //console.log(response);
+          if(response.status){
+            let data = JSON.parse(response.data);
+            console.log(data);
+            let tbodyVehicle = document.querySelector('#tbodyVehicle');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+              let pk = data[i].pk;
+              let alias = data[i].fields.alias;
+              let enrollment = data[i].fields.enrollment;
+              let date_service = data[i].fields.data_service;
+              date_service = date_service.slice(0,10);
+
+              content += "<tr><td>" + pk +
+                "</td><td>" + enrollment +
+                "</td><td>"  + alias +
+                "</td><td>" + date_service +
+                "</td><td>" + " " + "</td></tr>";
+            }
+
+            tbodyVehicle.innerHTML = content;
+            document.querySelector('#elemVehicles').style.display = "block";
+            document.querySelector('#btnNewVehicle').style.display = "block";
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+
+    }
+
+    function getBinnacles(){
+
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'getBinnacles' %}",
+        success: function(response){
+          console.log(response);
+          if(response.status){
+            let data = JSON.parse(response.data);
+
+            let tbodyBinnacle = document.querySelector('#tbodyBinnacle');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+              //console.log(data[i]);
+              let pk = data[i].pk;
+              let route = data[i].fields.binnacle.route;
+              let start_time = data[i].fields.binnacle.start_time;
+              let end_time = data[i].fields.binnacle.end_time;
+              let vehicle = data[i].fields.binnacle.vehicle.alias;
+              let driver = data[i].fields.driver.name;
+
+              content += "<tr><td>" + pk +
+                "</td><td>" + route +
+                "</td><td>"  + start_time +
+                "</td><td>" + end_time +
+                "</td><td>" + vehicle +
+                "</td><td>" + driver + "</td></tr>";
+            }
+
+            tbodyBinnacle.innerHTML = content;
+            document.querySelector('#elemBinnacles').style.display = "block";
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+
+    }
+
+    function getServices(){
+
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'getServices' %}",
+        success: function(response){
+          if(response.status){
+            let data = JSON.parse(response.data);
+            let tbodyServices = document.querySelector('#tbodyServices');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+              //console.log(data[i]);
+              let pk = data[i].pk;
+              let subject = data[i].fields.service.subject;
+              let from_depto = data[i].fields.service.from_depto;
+              let datetime = data[i].fields.service.datetime.slice(0,10);
+              let start_time = data[i].fields.service.start_time;
+              let end_time = data[i].fields.service.end_time;
+              let driver = data[i].fields.driver.name;
+              let description = data[i].fields.service.description;
+
+              content += "<tr><td>" + pk +
+                "</td><td>" + subject +
+                "</td><td>"  + from_depto +
+                "</td><td>" + datetime +
+                "</td><td>" + start_time +
+                "</td><td>" + end_time +
+                "</td><td>" + driver +
+                "</td><td>" + description + "</td></tr>";
+            }
+
+            tbodyServices.innerHTML = content;
+            document.querySelector('#elemServices').style.display = "block";
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+    }
+
+    function getRefuels(){
+
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'getRefuels' %}",
+        success: function(response){
+
+          if(response.status){
+            let data = JSON.parse(response.data);
+            console.log(data);
+            let tbodyRefuel = document.querySelector('#tbodyRefuel');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+              //console.log(data[i]);
+              let pk = data[i].pk;
+              let datetime = data[i].fields.datetime.slice(0,10);
+              let liters = data[i].fields.liters;
+              let amount = data[i].fields.amount;
+              let vehicle = data[i].fields.vehicle.name;
+              let voucher = data[i].fields.image;
+
+              content += "<tr><td>" + pk +
+                "</td><td>" + datetime +
+                "</td><td>"  + liters +
+                "</td><td>" + amount +
+                "</td><td>" + vehicle +
+                "</td><td>" + voucher + "</td></tr>";
+            }
+
+            tbodyRefuel.innerHTML = content;
+            document.querySelector('#elemRefuel').style.display = "block";
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+
+    }
+
+    function getUsers(){
+
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'getUsers' %}",
+        success: function(response){
+
+          if(response.status){
+            let data = JSON.parse(response.data);
+            let tbodyUser = document.querySelector('#tbodyUser');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+              //console.log(data[i]);
+              let pk = data[i].pk;
+              let fullname = data[i].fields.name + " " +
+              data[i].fields.lastP + " " + data[i].fields.lastM;
+              let email = data[i].fields.email;
+              let phone = data[i].fields.phone;
+              let address = data[i].fields.address;
+
+              content += "<tr><td>" + pk +
+                "</td><td>" + fullname +
+                "</td><td>"  + email +
+                "</td><td>" + phone +
+                "</td><td>" + address + "</td></tr>";
+            }
+
+            tbodyUser.innerHTML = content;
+            document.querySelector('#elemUsers').style.display = "block";
+            document.querySelector('#btnNewUser').style.display = "block";
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+
+    }
+
+  </script>
 {% endblock %}

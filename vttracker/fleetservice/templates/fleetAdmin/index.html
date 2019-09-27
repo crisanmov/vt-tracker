@@ -4,8 +4,8 @@
   <style>
     .services-container{
       display: flex;
-      margin-top: 30px;
-      margin-left: 66px
+      //margin-top: 30px;
+      //margin-left: 20px
     }
     .service{
       text-align: center;
@@ -26,24 +26,41 @@
       width: 140px !important;
       border: none !important;
     }
+
+    .form-perf{
+      width: 30%;
+      margin: 5px;
+    }
   </style>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
 {% endblock %}
 {% block body %}
   <div class="container">
+    <div class="" style="margin: 0px;">
+      <!--<a href="javascript:history.back()">Regresar</a>-->
+      <h5 style="margin-top: 15px;">Servicios de Flotilla</h5>
+    </div>
     <div class="" style="display: inline-flex;">
-      <div class="" style="margin: 15px;">
-        <!--<a href="javascript:history.back()">Regresar</a>-->
-        <h3 style="margin-top: 50px;">Servicios de Flotilla</h3>
-      </div>
+
       <div class="services-container">
+
+        <!--Usuarios-->
+        <div class="service" id="user">
+          <div class="card" style="width: 18rem;">
+            {% load static %}
+            <img src="{% static "images/usuario.jpg" %}" class="card-img-top" alt="user">
+          </div>
+          <div class="card-body">
+            <p class="card-text">Usuarios</p>
+          </div>
+        </div>
 
         <!--Bitacora-->
         <div class="service" id="binnacle">
           <div class="card" style="width: 18rem;">
             {% load static %}
-            <img src="{% static "images/bitacora.png" %}" class="card-img-top" alt="bitacora">
+            <img src="{% static "images/bitacora.png" %}" class="card-img-top" alt="binnacle">
           </div>
           <div class="card-body">
             <p class="card-text">Bitacora</p>
@@ -54,7 +71,7 @@
         <div class="service" id="driver">
           <div class="card" style="width: 18rem;">
             {% load static %}
-            <img src="{% static "images/conductor.jpeg" %}" class="card-img-top" alt="bitacora">
+            <img src="{% static "images/conductor.jpeg" %}" class="card-img-top" alt="driver">
           </div>
           <div class="card-body">
             <p class="card-text">Conductores</p>
@@ -65,7 +82,7 @@
         <div class="service" id="partialService">
           <div class="card" style="width: 18rem;">
             {% load static %}
-            <img src="{% static "images/encomienda.png" %}" class="card-img-top" alt="bitacora">
+            <img src="{% static "images/encomienda.png" %}" class="card-img-top" alt="partialService">
           </div>
           <div class="card-body">
             <p class="card-text">Encomiendas</p>
@@ -76,10 +93,32 @@
         <div class="service" id="vehicle">
           <div class="card" style="width: 18rem;">
             {% load static %}
-            <img src="{% static "images/vehiculo.png" %}" class="card-img-top" alt="bitacora">
+            <img src="{% static "images/vehiculo.png" %}" class="card-img-top" alt="vehicle">
           </div>
           <div class="card-body">
             <p class="card-text">Vehiculos</p>
+          </div>
+        </div>
+
+        <!--Recargas-->
+        <div class="service" id="refuel">
+          <div class="card" style="width: 18rem;">
+            {% load static %}
+            <img src="{% static "images/recarga2.png" %}" class="card-img-top" alt="refuel">
+          </div>
+          <div class="card-body">
+            <p class="card-text">Recargas</p>
+          </div>
+        </div>
+
+        <!--Rendimiento-->
+        <div class="service" id="performance">
+          <div class="card" style="width: 18rem;">
+            {% load static %}
+            <img src="{% static "images/rendimiento2.jpg" %}" class="card-img-top" alt="performance">
+          </div>
+          <div class="card-body">
+            <p class="card-text">Rendimiento</p>
           </div>
         </div>
 
@@ -91,7 +130,31 @@
       <!--Elements for binnacles-->
       <div class="" id="elemBinnacles" style="display: none">
         <h4>Bitacora</h4>
-        <br>
+        <div class="search-binnacle" style="display: flex;">
+          <div class="form-group form-perf">
+            <label for="vehicles">Fecha inicio: </label>
+            <select class="form-control" id="refuelList">
+              <option value="0">Selecciona una opción</option>
+            </select>
+          </div>
+          <div class="form-group form-perf">
+            <label for="vehicles">Fecha fin: </label>
+            <select class="form-control" id="refuelList">
+              <option value="0">Selecciona una opción</option>
+            </select>
+          </div>
+          <div class="form-group form-perf">
+            <label for="vehicles">Vehiculo: </label>
+            <select class="form-control" id="refuelList">
+              <option value="0">Selecciona una opción</option>
+            </select>
+          </div>
+          <div class="form-group form-perf">
+            <label for="vehicles"></label><br>
+            <a class="btn btn-success" href="#">Buscar</a>
+            <a class="btn btn-success" href="#">Exportar</a>
+          </div>
+        </div>
         <!--<a style="width: 20%;" class="btn btn-success" id ="btnNewDriver" data-toggle="modal">Nuevo Conductor</a><br>-->
         <table class="table table-striped">
           <tr>
@@ -116,9 +179,10 @@
           <tr>
             <th scope="col"># ID</th>
             <th scope="col">Nombre</th>
-            <th scope="col">Username</th>
-            <th scope="col">Email</th>
-            <th scope="col">Alias</th>
+            <th scope="col">Numero de licencia</th>
+            <th scope="col">Fecha expedición</th>
+            <th scope="col">Fecha expiración</th>
+            <th scope="col">Telefono</th>
             <th scope="col"></th>
           </tr>
           <tbody id="tbodyDriver"></tbody>
@@ -162,6 +226,81 @@
         </table>
       </div>
 
+      <!--Elements for Refuel-->
+      <div class="" id="elemRefuel" style="display:none;">
+        <h4>Recargas de Combustible</h4>
+        <br>
+        <table class="table table-striped">
+          <tr>
+            <th scope="col"># ID</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Litros</th>
+            <th scope="col">Importe</th>
+            <th scope="col">Vehiculo</th>
+            <th scope="col">Comprobante</th>
+            <th scope="col"></th>
+          </tr>
+          <tbody id="tbodyRefuel"></tbody>
+        </table>
+      </div>
+
+      <!--Elements for Users-->
+      <div class="" id="elemUsers" style="display:none;">
+        <a class="btn btn-success" style="display:none; width:15%;" id ="btnNewUser" href="{% url 'register' %}">Nuevo Usuario</a><br>
+        <br>
+        <h4>Usuarios registrados</h4>
+        <br>
+        <table class="table table-striped">
+          <tr>
+            <th scope="col"># ID</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Email</th>
+            <th scope="col">Telefono</th>
+            <th scope="col">Dirección</th>
+            <th scope="col"></th>
+          </tr>
+          <tbody id="tbodyUser"></tbody>
+        </table>
+      </div>
+
+      <!--Elements for performance-->
+      <div class="" id="elemPerformance" style="display:none;">
+        <h4>Verificar rendimiento</h4>
+        <br>
+        <div class="form-performance" style="width: 100%; display:flex">
+          <div class="form-group form-perf">
+            <label for="vehicles">Vehiculo: </label>
+            <select class="form-control" id="vehiclesList">
+              <option value="0">Selecciona una opción</option>
+            </select>
+          </div>
+          <div class="form-group form-perf">
+            <label for="vehicles">Periodo de recarga: </label>
+            <select class="form-control" id="refuelList">
+              <option value="0">Selecciona una opción</option>
+            </select>
+          </div>
+
+          <div class="form-group form-perf">
+            <label for="vehicles"></label><br>
+            <a class="btn btn-success" href="#">Buscar</a>
+            <a class="btn btn-success" href="#">Exportar</a>
+          </div>
+        </div>
+        <br>
+        <h5>Resultados</h5><br>
+        <table class="table table-striped">
+          <tr>
+            <th scope="col">Vehiculo</th>
+            <th scope="col">Kilometros recorridos</th>
+            <th scope="col">Litros usados</th>
+            <th scope="col">Fechas</th>
+            <th scope="col"></th>
+          </tr>
+          <tbody id="tbodyPerformance"></tbody>
+        </table>
+      </div>
+
       <!-- Modal Driver-->
       <div class="modal fade" id="newDriver" tabindex="-1" role="dialog" aria-labelledby="newDriverLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -184,6 +323,18 @@
                   <option value="0">Selecciona una opción</option>
                 </select>
               </div>
+              <div class="form-group">
+                <label for="aliasDriver">Número de licencia: </label>
+                <input type="text" class="form-control" id="license_number" placeholder="Introduce el número de licencia">
+              </div>
+              <div class="form-group">
+                <label for="aliasDriver">Fecha de expedición: </label>
+                <input type="date" class="form-control" id="license_expedition">
+              </div>
+              <div class="form-group">
+                <label for="aliasDriver">Fecha de expiración: </label>
+                <input type="date" class="form-control" id="license_expiration">
+              </div>
               </div>
               <div class="modal-footer">
                 <button type="submit" id="btnSaveDriver" class="btn btn-primary">Guardar</button>
@@ -196,31 +347,33 @@
       <div class="modal fade" id="newVehicle" tabindex="-1" role="dialog" aria-labelledby="newVehicleLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="newVehicleLabel">Nuevo Vehiculo</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+              <div class="modal-header">
+                <h5 class="modal-title" id="newVehicleLabel">Nuevo Vehiculo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="placaVehicle">Número de placa: </label>
+                  <input type="text" class="form-control" id="placaVehicle" placeholder="Introduce el número de placa.">
+                </div>
+                <div class="form-group">
+                  <label for="aliasVehicle">Nombre o alías del vehiculo: </label>
+                  <input type="text" class="form-control" id="aliasVehicle" placeholder="Introduce el nombre o alías del vehiculo.">
+                </div>
+                <div class="form-group">
+                  <label for="dateServiceVehicle">Fecha de servicio: </label>
+                  <input type="date" class="form-control" id="dateServiceVehicle" max="3000-12-31" min="2015-01-01" placeholder="Introduce la ultima fecha de servicio al vehiculo.">
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" id="btnSaveVehicle" class="btn btn-primary">Guardar</button>
+                </div>
             </div>
-            <div class="modal-body">
-              <div class="form-group">
-                <label for="placaVehicle">Número de placa: </label>
-                <input type="text" class="form-control" id="placaVehicle" placeholder="Introduce el número de placa.">
-              </div>
-              <div class="form-group">
-                <label for="aliasVehicle">Nombre o alías del vehiculo: </label>
-                <input type="text" class="form-control" id="aliasVehicle" placeholder="Introduce el nombre o alías del vehiculo.">
-              </div>
-              <div class="form-group">
-                <label for="dateServiceVehicle">Fecha de servicio: </label>
-                <input type="date" class="form-control" id="dateServiceVehicle" max="3000-12-31" min="2015-01-01" placeholder="Introduce la ultima fecha de servicio al vehiculo.">
-              </div>
-              <div class="modal-footer">
-                <button type="submit" id="btnSaveVehicle" class="btn btn-primary">Guardar</button>
-              </div>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -229,6 +382,7 @@
 
     var $j = jQuery.noConflict();
 
+    //#############services#######################
     $j('#driver').click(function(){
       let service = $(this);
       cleanContentServices(service);
@@ -256,6 +410,28 @@
       setColorSelect(service);
       getVehicles();
 
+    });
+
+    $j('#user').click(function(){
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+      getUsers();
+    });
+
+    $j('#refuel').click(function(){
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+      getRefuels();
+    });
+
+    $j('#performance').click(function(){
+      let service = $(this);
+      cleanContentServices(service);
+      setColorSelect(service);
+
+      document.querySelector('#elemPerformance').style.display = "block";
     });
 
     $j('#btnNewDriver').click(function(e){
@@ -307,6 +483,9 @@
         'alias': document.querySelector('#aliasDriver').value,
         'fullname': usersList.options[usersList.selectedIndex].text,
         'idUser': usersList.options[usersList.selectedIndex].value,
+        'license_number': document.querySelector('#license_number').value,
+        'license_expedition': document.querySelector('#license_expedition').value,
+        'license_expiration': document.querySelector('#license_expiration').value,
         'csrfmiddlewaretoken': '{{ csrf_token }}',
       };
 
@@ -329,13 +508,15 @@
 
     });
 
+    //#################utils#######################
     function setColorSelect(service) {
         service.css('backgroundColor','#49a746');
         clearStyle(service.attr('id'));
     }
 
     function clearStyle(service){
-      let services = ['binnacle', 'driver', 'partialService', 'vehicle'];
+      //services = list of id's for each div that contain one service
+      let services = ['binnacle', 'driver', 'partialService', 'vehicle', 'user', 'refuel', 'performance'];
       for(let i=0; i<services.length; i++){
         if(services[i] != $j('#' + service).attr('id')){
           $j('#' + services[i]).css('backgroundColor','');
@@ -356,11 +537,15 @@
     function cleanContentServices(service){
 
       let idService = service.attr('id');
+      //object key= btn_event, value = div_id
       let content_services = {
         "driver": "elemDrivers",
         "vehicle": "elemVehicles",
         "binnacle": "elemBinnacles",
         "partialService": "elemServices",
+        "refuel": "elemRefuel",
+        "user": "elemUsers",
+        "performance": "elemPerformance",
       };
 
       for(service in content_services){
@@ -371,6 +556,44 @@
       }
     }
 
+    //#################funcionts for modal#######################
+
+    function saveDriver(driver){
+      let form = $('#formNewDriver');
+      $j.ajax({
+        data: driver,
+        type: form.attr('method'),
+        url: form.attr('action'),
+        success: function(response){
+          console.log(response);
+          getDrivers();
+          $('#newDriver').modal('hide');
+        },
+        error: function(response){
+
+        }
+
+      });
+    }
+
+    function saveVehicle(vehicle){
+      $j.ajax({
+        data: vehicle,
+        type: "POST",
+        url: "{% url 'createVehicle' %}",
+        success: function(response){
+          console.log(response);
+          $('#newVehicle').modal('hide');
+          getVehicles()
+        },
+        error: function(response){
+
+        }
+
+      });
+    }
+
+    //###############AJAX Functions##################
     function getDrivers(){
 
       $j.ajax({
@@ -379,7 +602,7 @@
         success: function(response){
           //console.log(response);
           if(response.status){
-            let data = response.data;
+            let data = JSON.parse(response.data);
             console.log(data);
 
             let tbodyDriver = document.querySelector('#tbodyDriver');
@@ -387,17 +610,19 @@
 
             for(let i=0; i<data.length; i++){
 
-              let pk = data[i]['pk'];
-              let name = data[i]['name'];
-              let username = data[i]['username'];
-              let alias = data[i]['alias'];
-              let email = data[i]['email'];
+              let pk = data[i].pk;
+              let fullname = data[i].fields.user.name;
+              let license_number = data[i].fields.license_number;
+              let license_expedition = data[i].fields.license_expedition;
+              let license_expiration = data[i].fields.license_expiration;
+              let phone = data[i].fields.user.phone;
 
               content += "<tr><td>" + pk +
-                "</td><td>" + name +
-                "</td><td>"  + username +
-                "</td><td>" + email +
-                "</td><td>" + alias + "</td></tr>";
+                "</td><td>" + fullname +
+                "</td><td>"  + license_number +
+                "</td><td>" + license_expedition +
+                  "</td><td>" + license_expiration +
+                "</td><td>" + phone + "</td></tr>";
             }
 
             tbodyDriver.innerHTML = content;
@@ -541,40 +766,91 @@
       });
     }
 
-    function saveDriver(driver){
-      let form = $('#formNewDriver');
+    function getRefuels(){
+
       $j.ajax({
-        data: driver,
-        type: form.attr('method'),
-        url: form.attr('action'),
+        type: 'GET',
+        url: "{% url 'getRefuels' %}",
         success: function(response){
-          console.log(response);
-          getDrivers();
-          $('#newDriver').modal('hide');
+
+          if(response.status){
+            let data = JSON.parse(response.data);
+            console.log(data);
+            let tbodyRefuel = document.querySelector('#tbodyRefuel');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+              //console.log(data[i]);
+              let pk = data[i].pk;
+              let datetime = data[i].fields.datetime.slice(0,10);
+              let liters = data[i].fields.liters;
+              let amount = data[i].fields.amount;
+              let vehicle = data[i].fields.vehicle.name;
+              let voucher = data[i].fields.image;
+
+              content += "<tr><td>" + pk +
+                "</td><td>" + datetime +
+                "</td><td>"  + liters +
+                "</td><td>" + amount +
+                "</td><td>" + vehicle +
+                "</td><td>" + voucher + "</td></tr>";
+            }
+
+            tbodyRefuel.innerHTML = content;
+            document.querySelector('#elemRefuel').style.display = "block";
+          }else{
+            alert(response.msgError);
+          }
         },
-        error: function(response){
-
+        error: function(e){
+          console.log(e);
         }
-
       });
+
     }
 
-    function saveVehicle(vehicle){
+    function getUsers(){
+
       $j.ajax({
-        data: vehicle,
-        type: "POST",
-        url: "{% url 'createVehicle' %}",
+        type: 'GET',
+        url: "{% url 'getUsers' %}",
         success: function(response){
-          console.log(response);
-          $('#newVehicle').modal('hide');
-          getVehicles()
+
+          if(response.status){
+            let data = JSON.parse(response.data);
+            let tbodyUser = document.querySelector('#tbodyUser');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+              //console.log(data[i]);
+              let pk = data[i].pk;
+              let fullname = data[i].fields.name + " " +
+              data[i].fields.lastP + " " + data[i].fields.lastM;
+              let email = data[i].fields.email;
+              let phone = data[i].fields.phone;
+              let address = data[i].fields.address;
+
+              content += "<tr><td>" + pk +
+                "</td><td>" + fullname +
+                "</td><td>"  + email +
+                "</td><td>" + phone +
+                "</td><td>" + address + "</td></tr>";
+            }
+
+            tbodyUser.innerHTML = content;
+            document.querySelector('#elemUsers').style.display = "block";
+            document.querySelector('#btnNewUser').style.display = "block";
+          }else{
+            alert(response.msgError);
+          }
         },
-        error: function(response){
-
+        error: function(e){
+          console.log(e);
         }
-
       });
+
     }
+
   </script>
 
 {% endblock %}
