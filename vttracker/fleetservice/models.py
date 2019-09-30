@@ -76,6 +76,7 @@ class Binnacle(models.Model):
     route = models.CharField(max_length=50, choices=ROUTES, default='Seleccion')
     start_kilometer = models.FloatField(blank=False, null=False)
     end_kilometer = models.FloatField(blank=False, null=False)
+    datetime = models.DateTimeField(max_length=6, blank = False, null=False)
     start_time = models.TimeField(max_length=6, blank = False, null=False)
     end_time = models.TimeField(max_length=6, blank = False, null=False)
     created_at = models.DateTimeField(max_length=6, blank = False, null=False)
@@ -83,7 +84,7 @@ class Binnacle(models.Model):
     #Relationship DB
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
 
-    REQUIRED_FIELDS = ['id_binacle', 'route', 'start_kilometer','end_kilometer', 'start_time', 'end_time']
+    REQUIRED_FIELDS = ['id_binacle', 'route', 'start_kilometer','end_kilometer', 'datetime', 'start_time', 'end_time']
 
     class Meta:
         verbose_name = _('bitacora')
@@ -99,6 +100,7 @@ class Binnacle(models.Model):
             'route': self.route,
             'start_kilometer': self.start_kilometer,
             'end_kilometer': self.end_kilometer,
+            'datetime': self.datetime,
             'start_time': self.start_time,
             'end_time': self.end_time,
             'created_at': self.created_at,
@@ -114,10 +116,11 @@ class Refuel(models.Model):
     liters = models.FloatField(max_length=50, blank=False)
     amount = models.FloatField(max_length=50, blank=False)
     datetime = models.DateTimeField(max_length=6, blank = False, null=False)
-    image = models.CharField(max_length=200, blank=False)
+    #image = models.CharField(max_length=200, blank=False)
+    image = models.FileField(upload_to='documents/')
 
-    #Relationship DB OneToOneField
-    vehicle = models.OneToOneField(Vehicle, on_delete=models.CASCADE,
+    #Relationship DB
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE,
         related_name='user'
     )
 

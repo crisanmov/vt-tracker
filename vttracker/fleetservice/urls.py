@@ -1,4 +1,6 @@
+from django.conf.urls.static import static
 from django.urls import path, include
+from django.conf import settings
 from django.conf.urls import url
 from . import views
 
@@ -16,5 +18,9 @@ urlpatterns = [
     url(r'^register_binnacle/$', views.registerBinnacle, name='registerBinnacle'),
     url(r'^register_refuel/$', views.registerRefuel, name='registerRefuel'),
     url(r'^register_service/$', views.registerService, name='registerService'),
+    url(r'^binnacle_search/$', views.binnacleSearch, name='binnacleSearch'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

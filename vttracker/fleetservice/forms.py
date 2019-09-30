@@ -14,6 +14,7 @@ class BinnacleForm(forms.ModelForm):
             'route',
             'start_kilometer',
             'end_kilometer',
+            'datetime',
             'start_time',
             'end_time',
         )
@@ -22,6 +23,7 @@ class BinnacleForm(forms.ModelForm):
             'route': 'Ruta:',
             'start_kilometer': 'Km Inicial:',
             'end_kilometer': 'Km Final:',
+            'datetime': 'Fecha',
             'start_time': 'Hora de Inicio (HH:MM):',
             'end_time': 'Hora de Fin (HH:MM):',
             'fuel_voucher': 'Voucher de Combustible',
@@ -31,6 +33,7 @@ class BinnacleForm(forms.ModelForm):
             'route': forms.Select(attrs={'class': 'validate form-control'}),
             'start_kilometer': forms.TextInput(attrs={'class': 'validate form-control'}),
             'end_kilometer': forms.TextInput(attrs={'class': 'validate form-control'}),
+            'datetime': forms.DateInput(format='%d/%m/%Y', attrs={'id': 'dateB', 'class': 'validate form-control'}),
             'start_time': forms.TimeInput(format='%H:%M', attrs={'id': 'timeS', 'class':'validate form-control'}),
             'end_time': forms.TimeInput(attrs={'id': 'timeE', 'class':'validate form-control'}),
             'fuel_voucher': forms.TextInput(attrs={'class': 'validate form-control'}),
@@ -42,6 +45,7 @@ class BinnacleForm(forms.ModelForm):
         binnacle.route = self.cleaned_data['route']
         binnacle.start_kilometer = self.cleaned_data['start_kilometer']
         binnacle.end_kilometer = self.cleaned_data['end_kilometer']
+        binnacle.datetime = self.cleaned_data['datetime']
         binnacle.start_time = self.cleaned_data['start_time']
         binnacle.end_time = self.cleaned_data['end_time']
         binnacle.created_at = timezone.now()
@@ -74,7 +78,7 @@ class RefuelForm(forms.ModelForm):
             'amount': forms.TextInput(attrs={'class': 'validate form-control'}),
             'datetime': forms.DateInput(format='%d/%m/%Y', attrs={'id': 'datepickerA', 'class':'validate form-control'}),
             #'image': forms.FileInput(attrs={'class': 'validate form-control'}),
-            'image': forms.TextInput(attrs={'class': 'validate form-control'}),
+            'image': forms.FileInput(attrs={'class': 'validate form-control', 'id': 'img_file'}),
         }
 
     def save(self, commit=True):

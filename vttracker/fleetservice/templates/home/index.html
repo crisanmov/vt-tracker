@@ -27,10 +27,13 @@
     width: 140px !important;
     border: none !important;
   }
-
   .form-perf{
     width: 30%;
     margin: 5px;
+  }
+  .content-pagination{
+
+    margin: 0 auto;
   }
 </style>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -132,29 +135,29 @@
       <div class="" id="content_service">
         <!--Elements for binnacles-->
         <div class="" id="elemBinnacles" style="display: none">
-          <h4>Bitacora</h4>
+          <div class="" style="display: flex;">
+            <h4>Bitacora</h4>
+            <a class="btn btn-warning" href="#" style="margin-left: 10px;" id="updateB">Actualizar</a>
+          </div>
+
           <div class="search-binnacle" style="display: flex;">
             <div class="form-group form-perf">
               <label for="vehicles">Fecha inicio: </label>
-              <select class="form-control" id="refuelList">
-                <option value="0">Selecciona una opción</option>
-              </select>
+              <input type="date" class="form-control" id="startDateB">
             </div>
             <div class="form-group form-perf">
               <label for="vehicles">Fecha fin: </label>
-              <select class="form-control" id="refuelList">
-                <option value="0">Selecciona una opción</option>
-              </select>
+              <input type="date" class="form-control" id="endDateB">
             </div>
             <div class="form-group form-perf">
               <label for="vehicles">Vehiculo: </label>
-              <select class="form-control" id="refuelList">
+              <select class="form-control" id="vehicleList">
                 <option value="0">Selecciona una opción</option>
               </select>
             </div>
             <div class="form-group form-perf">
               <label for="vehicles"></label><br>
-              <a class="btn btn-success" href="#">Buscar</a>
+              <a class="btn btn-success" href="#" id="btnSearchBinnacle">Buscar</a>
               <a class="btn btn-success" href="#">Exportar</a>
             </div>
           </div>
@@ -163,6 +166,7 @@
             <tr>
               <th scope="col"># ID</th>
               <th scope="col">Ruta</th>
+              <th scope="col">Fecha</th>
               <th scope="col">Hora de inicio</th>
               <th scope="col">Hora fin</th>
               <th scope="col">Vehiculo</th>
@@ -171,11 +175,36 @@
             </tr>
             <tbody id="tbodyBinnacle"></tbody>
           </table>
+          <br>
+          <div class="content-pagination">
+            <nav aria-label="Page navigation example">
+              <ul class="pagination">
+                <li class="page-item">
+                  <a class="page-link" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                <!--
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                -->
+                <li class="page-item">
+                  <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
 
         <!--Elements for drivers-->
         <div class="" id="elemDrivers" style="display: none">
-          <h4>Conductores Activos</h4>
+          <div class="" style="display: flex;">
+            <h4>Conductores Activos</h4>
+            <a class="btn btn-warning" href="#" style="margin-left: 10px;" id="updateD">Actualizar</a>
+          </div>
           <br>
           <a style="width: 20%;" class="btn btn-success" id ="btnNewDriver" data-toggle="modal">Nuevo Conductor</a><br>
           <table class="table table-striped">
@@ -194,7 +223,10 @@
 
         <!--Elements for services-->
         <div class="" id="elemServices" style="display: none">
-          <h4>Encomiendas</h4>
+          <div class="" style="display: flex;">
+            <h4>Encomiendas</h4>
+            <a class="btn btn-warning" href="#" style="margin-left: 10px;" id="updateS">Actualizar</a>
+          </div>
           <br>
           <table class="table table-striped">
             <tr>
@@ -213,7 +245,10 @@
 
         <!--Elements for Vehicles-->
         <div class="" id="elemVehicles" style="display:none;">
-          <h4>Vehiculos Disponibles</h4>
+          <div class="" style="display: flex;">
+            <h4>Vehiculos Disponibles</h4>
+            <a class="btn btn-warning" href="#" style="margin-left: 10px;" id="updateV">Actualizar</a>
+          </div>
           <br>
           <a style="display:none; width: 20%;" class="btn btn-success" id ="btnNewVehicle" data-toggle="modal">Nuevo Vehiculo</a>
           <br>
@@ -231,7 +266,10 @@
 
         <!--Elements for Refuel-->
         <div class="" id="elemRefuel" style="display:none;">
-          <h4>Recargas de Combustible</h4>
+          <div class="" style="display: flex;">
+            <h4>Recargas de Combustible</h4>
+            <a class="btn btn-warning" href="#" style="margin-left: 10px;" id="updateR">Actualizar</a>
+          </div>
           <br>
           <table class="table table-striped">
             <tr>
@@ -251,7 +289,10 @@
         <div class="" id="elemUsers" style="display:none;">
           <a class="btn btn-success" style="display:none; width:15%;" id ="btnNewUser" href="{% url 'register' %}">Nuevo Usuario</a><br>
           <br>
-          <h4>Usuarios registrados</h4>
+          <div class="" style="display: flex;">
+            <h4>Usuarios registrados</h4>
+            <a class="btn btn-warning" href="#" style="margin-left: 10px;" id="updateU">Actualizar</a>
+          </div>
           <br>
           <table class="table table-striped">
             <tr>
@@ -408,6 +449,7 @@
       cleanContentServices(service);
       setColorSelect(service);
       getBinnacles();
+      populateVehicles();
     });
 
     $j('#partialService').click(function(){
@@ -521,6 +563,25 @@
 
     });
 
+
+    $j('#btnSearchBinnacle').click(function(){
+
+      let startDateB = document.querySelector('#startDateB').value;
+      let endDateB = document.querySelector('#endDateB').value;
+
+      let vehiclesList = document.querySelector('#vehicleList');
+      let vehicle = vehiclesList.options[vehiclesList.selectedIndex].value;
+      let filter = {
+        'startDateB': startDateB,
+        'endDateB': endDateB,
+        'vehicle': vehicle,
+      };
+
+      searchBinnacle(filter);
+    });
+
+
+
     //#################utils#######################
     function setColorSelect(service) {
         service.css('backgroundColor','#49a746');
@@ -568,6 +629,36 @@
         }
       }
     }
+
+    $j('#updateB').click(function(){
+      document.querySelector('#tbodyBinnacle').innerHTML = '';
+      getBinnacles();
+    });
+
+    $j('#updateD').click(function(){
+      document.querySelector('#tbodyDriver').innerHTML = '';
+      getDrivers();
+    });
+
+    $j('#updateS').click(function(){
+      document.querySelector('#tbodyServices').innerHTML = '';
+      getServices();
+    });
+
+    $j('#updateV').click(function(){
+      document.querySelector('#tbodyVehicle').innerHTML = '';
+      getVehicles();
+    });
+
+    $j('#updateR').click(function(){
+      document.querySelector('#tbodyRefuel').innerHTML = '';
+      getRefuels();
+    });
+
+    $j('#updateU').click(function(){
+      document.querySelector('#tbodyUser').innerHTML = '';
+      getUsers();
+    });
 
     //#################funcionts for modal#######################
 
@@ -618,6 +709,11 @@
             let data = JSON.parse(response.data);
             console.log(data);
 
+            //if data is empty
+            if(data.length === 0){
+              alert('No hay conductores registradas en el sistema.')
+            }
+
             let tbodyDriver = document.querySelector('#tbodyDriver');
             let content = "";
 
@@ -651,6 +747,33 @@
       });
     }
 
+    function populateVehicles(){
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'getVehicles' %}",
+        success: function(response){
+          if(response.status){
+            let data = JSON.parse(response.data);
+            let vehiclesList = $('#vehicleList');
+
+            for(let i=0; i<data.length; i++){
+              let vehicle = data[i].fields.alias;
+              let option = document.createElement('option');
+
+              option.text = vehicle;
+              option.setAttribute('value', data[i].pk);
+              vehiclesList.append(option);
+            }
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+    }
+
     function getVehicles(){
 
       $j.ajax({
@@ -661,6 +784,11 @@
           if(response.status){
             let data = JSON.parse(response.data);
             console.log(data);
+            //if data is empty
+            if(data.length === 0){
+              alert('No hay vehiculos registradas en el sistema.')
+            }
+
             let tbodyVehicle = document.querySelector('#tbodyVehicle');
             let content = "";
 
@@ -702,6 +830,11 @@
           if(response.status){
             let data = JSON.parse(response.data);
 
+            //if data is empty
+            if(data.length === 0){
+              alert('No hay bitacoras registradas en el sistema.')
+            }
+
             let tbodyBinnacle = document.querySelector('#tbodyBinnacle');
             let content = "";
 
@@ -710,12 +843,14 @@
               let pk = data[i].pk;
               let route = data[i].fields.binnacle.route;
               let start_time = data[i].fields.binnacle.start_time;
+              let datetime = data[i].fields.binnacle.datetime.slice(0, 10);
               let end_time = data[i].fields.binnacle.end_time;
               let vehicle = data[i].fields.binnacle.vehicle.alias;
               let driver = data[i].fields.driver.name;
 
               content += "<tr><td>" + pk +
                 "</td><td>" + route +
+                  "</td><td>"  + datetime +
                 "</td><td>"  + start_time +
                 "</td><td>" + end_time +
                 "</td><td>" + vehicle +
@@ -741,8 +876,15 @@
         type: 'GET',
         url: "{% url 'getServices' %}",
         success: function(response){
+          console.log(response);
           if(response.status){
             let data = JSON.parse(response.data);
+
+            //if data is empty
+            if(data.length === 0){
+              alert('No hay encomiendas registradas en el sistema.')
+            }
+
             let tbodyServices = document.querySelector('#tbodyServices');
             let content = "";
 
@@ -789,6 +931,12 @@
           if(response.status){
             let data = JSON.parse(response.data);
             console.log(data);
+
+            //if data is empty
+            if(data.length === 0){
+              alert('No hay recargas registradas en el sistema.')
+            }
+
             let tbodyRefuel = document.querySelector('#tbodyRefuel');
             let content = "";
 
@@ -806,7 +954,7 @@
                 "</td><td>"  + liters +
                 "</td><td>" + amount +
                 "</td><td>" + vehicle +
-                "</td><td>" + voucher + "</td></tr>";
+                "</td><td><a href='media/" + voucher + "'>Ver comprobante</a></td></tr>";
             }
 
             tbodyRefuel.innerHTML = content;
@@ -831,6 +979,12 @@
 
           if(response.status){
             let data = JSON.parse(response.data);
+
+            //if data is empty
+            if(data.length === 0){
+              alert('No hay usuarios registradas en el sistema.')
+            }
+
             let tbodyUser = document.querySelector('#tbodyUser');
             let content = "";
 
@@ -862,6 +1016,26 @@
         }
       });
 
+    }
+
+    function searchBinnacle(filter){
+
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'binnacleSearch' %}",
+        data: filter,
+        success: function(response){
+          if(response.status){
+
+
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
     }
 
   </script>

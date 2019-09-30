@@ -4,8 +4,10 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.storage import FileSystemStorage
 from django.core import serializers
 from django.utils import timezone
+from django.conf import settings
 from accounts.models import User
 from fleetservice.forms import (
     BinnacleForm,
@@ -104,8 +106,7 @@ def getUsers(resquest):
     response_data = {}
     try:
         data = serializers.serialize('json', User.objects.filter(
-        is_superuser=False,
-        is_active=True),
+        is_superuser=False),
         fields=('name', 'lastP', 'lastM', 'email', 'phone', 'address'))
 
         response_data['status'] = True
@@ -216,15 +217,22 @@ def registerBinnacle(request):
 
 @login_required(login_url='/accounts/login/')
 def registerRefuel(request):
-
-    if request.method == 'POST':
-        form = RefuelForm(request.POST)
+    if request.method == 'POST' and request.FILES:
+        form = RefuelForm(request.POST, request.FILES)
         response_data = {}
 
         if form.is_valid():
             refuel = form.save(commit=False)
             refuel.vehicle = Vehicle.objects.get(pk=request.POST.get('vehicle_id'))
             refuel.save()
+            #***********save image***********
+            image =  request.FILES['image']
+            #file_storage = FileSystemStorage()
+            #file = file_storage.save(image.name, image)
+            #path_file = file_storage.url(file)
+            path_file = 'documents/' + image.name
+            #********************************
+
             #***************save relation m2m*****************
             driver = Driver.objects.get(user=request.user.pk)
             DriverRefuel.objects.create(driver=driver, refuel=refuel, date_joined=timezone.now())
@@ -232,6 +240,7 @@ def registerRefuel(request):
 
             response_data['status'] = True
             response_data['msg'] = "Recarga de combustible guardada."
+            response_data['path_file'] = path_file
             return HttpResponse(json.dumps(response_data), content_type="application/json")
         else:
             response_data['status'] = False
@@ -266,3 +275,14 @@ def registerService(request):
         form = ServiceForm()
         args = {'form': form}
         return render(request, 'service/registerService.html', args)
+
+@login_required(login_url='/accounts/login/')
+def binnacleSearch(request):
+    print(request.GET)
+    startDate = request.GET.get('startDateB')
+    print(startDate)
+
+    response_data = {}
+    response_data['status'] = True
+    response_data['data'] = "A"
+    return HttpResponse(json.dumps(response_data), content_type="application/json")

@@ -424,6 +424,7 @@
       cleanContentServices(service);
       setColorSelect(service);
       getRefuels();
+      console.log("ww");
     });
 
     $j('#performance').click(function(){
@@ -793,7 +794,7 @@
                 "</td><td>"  + liters +
                 "</td><td>" + amount +
                 "</td><td>" + vehicle +
-                "</td><td>" + voucher + "</td></tr>";
+                "</td><td><a href='" + voucher + "'>" + voucher + "</a></td></tr>";
             }
 
             tbodyRefuel.innerHTML = content;

@@ -13,7 +13,8 @@
   <div class="content-binnacle">
     <h5>Recarga de Combustible</h5>
     <br>
-    <form class="formRefuel" method="post" id="formSaveRefuel" action="{% url 'registerRefuel'  %}">
+    <form class="formRefuel" method="post" id="formSaveRefuel"
+    enctype="multipart/form-data" action="{% url 'registerRefuel' %}">
       {% csrf_token %}
       <div class="form-group">
         {{form.liters.label_tag}}
@@ -39,7 +40,7 @@
       </div>
       <br>
       <div class="btnSaveRefuel">
-        <button class="btn btn-info" type="submit" id="btnSaveRefuel">Guardar</button>
+        <button class="btn btn-info" type="submit" id="btnSaveRefuel" disabled >Guardar</button>
       </div>
     </form>
   </div>
@@ -47,8 +48,20 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script>
   var $j = jQuery.noConflict();
-
   getVehicles();
+
+  var object_file = {};
+
+  $j('input:file').change(function(e){
+
+    let hasFile = $j('input:file').toArray().some(function(file) {
+      object_file['image'] = e.target.files[0];
+      return file.value;
+    });
+
+    $j('#btnSaveRefuel').prop('disabled', !hasFile);
+  });
+
 
   $j('#datepickerA').attr('type', 'date');
 
@@ -68,7 +81,7 @@
     $j.ajax({
       type: form.attr('method'),
       url: form.attr('action'),
-      data: formData,
+      data: JSON.stringify(formData),
       success: function(response){
         console.log(response);
         if(response.status){
@@ -85,7 +98,6 @@
   }
 
   function getVehicles(){
-    console.log("ssss");
     $j.ajax({
       type: 'GET',
       url: "{% url 'getVehicles' %}",
@@ -111,20 +123,65 @@
     });
   }
 
-  $j('#btnSaveRefuel').click(function(e){
+  $j('#formSaveRefuel').submit(function(e){
     e.preventDefault();
+    let form = $j('#formSaveRefuel');
+
+    let vehiclesList = document.querySelector('#vehiclesList');
+    var data = new FormData(form.get(0));
+
+    data.append('vehicle_id', vehiclesList.options[vehiclesList.selectedIndex].value);
+
+    console.log(data.getAll('csrfmiddlewaretoken'));
+    console.log(data.getAll('image'));
+    console.log(data.getAll('amount'));
+    console.log(data.getAll('vehicle_id'));
+
+    //var csrftoken = $j("[name=csrfmiddlewaretoken]").val();
+    //var json_data = {'csrfmiddlewaretoken' : csrftoken, 'file': formData };
+
+
+    $j.ajax({
+      type: form.attr('method'),
+      url: form.attr('action'),
+      data: data,
+      cache: false,
+      processData: false,
+      contentType: false,
+      success: function(response){
+        console.log(response);
+        if(response.status){
+          alert(response.msg);
+        }
+        else{
+          alert(response.errors);
+        }
+      },
+      error: function(e){
+        console.log(e);
+      }
+    });
+  });
+
+  //$j('#btnSaveRefuel').click(function(e){
+    //e.preventDefault();
 
     //validation
-    let form = $j('#formSaveRefuel');
+    /*let form = $j('#formSaveRefuel');
     let formData = jsonFormat(form.serializeArray());
     let vehiclesList = document.querySelector('#vehiclesList');
     let vehicleSelected = vehiclesList.options[vehiclesList.selectedIndex].value;
 
     formData['vehicle_id'] = vehicleSelected;
+    formData['image'] = object_file.image;
     console.log(formData);
 
-    saveRefuel(formData);
-  });
+    saveRefuel(formData);*/
+
+
+
+
+  //});
 
 </script>
 {% endblock %}

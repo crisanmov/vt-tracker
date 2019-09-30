@@ -68,7 +68,7 @@ class RegistrationForm(UserCreationForm):
 		user.email = self.cleaned_data['email']
 		user.phone = self.cleaned_data['phone']
 		user.is_superuser = False
-		user.is_active = True
+		user.is_active = False
 		user.date_joined = timezone.now()
 		#user.date_born = self.cleaned_data['date_born']
 
