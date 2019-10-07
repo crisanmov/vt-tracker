@@ -1,4 +1,6 @@
+import xmltodict
 import simplejson as json
+import random
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -8,6 +10,7 @@ from django.core.files.storage import FileSystemStorage
 from django.core import serializers
 from django.utils import timezone
 from django.conf import settings
+from django.db.models import Max, Min
 from accounts.models import User
 from fleetservice.forms import (
     BinnacleForm,
@@ -194,14 +197,24 @@ def registerBinnacle(request):
         response_data = {}
 
         if form.is_valid():
-
+            vehicle = Vehicle.objects.get(pk=request.POST.get('vehicle_id'))
             binnacle = form.save(commit=False)
-            binnacle.vehicle = Vehicle.objects.get(pk=request.POST.get('vehicle_id'))
+            binnacle.vehicle = vehicle
             binnacle.save()
-            #***************save relation m2m*****************
+            #***************save relation m2m***************************
             driver = Driver.objects.get(user=request.user.pk)
-            DriverBinacle.objects.create(driver=driver, binnacle=binnacle, date_joined=timezone.now())
-            #*************************************************
+            DriverBinacle.objects.create(driver=driver, binnacle=binnacle, \
+                date_joined=timezone.now())
+            #***********************************************************
+
+            #******************save file with current mileages**********
+            vehicle = 'kilometraje-actual-' + vehicle.alias
+            current_mileages = str(binnacle.end_kilometer)
+
+            path_file = settings.MEDIA_ROOT + '/current_mileages/' + vehicle + '.txt'
+            with open(path_file, 'w') as file:
+                file.write(current_mileages)
+            #***********************************************************
 
             response_data['status'] = True
             response_data['msg'] = "Registro de bitacora exitoso."
@@ -278,11 +291,133 @@ def registerService(request):
 
 @login_required(login_url='/accounts/login/')
 def binnacleSearch(request):
-    print(request.GET)
+    response_data = {}
+
     startDate = request.GET.get('startDateB')
-    print(startDate)
+    endDateB = request.GET.get('endDateB')
+
+    if request.GET.get('option') == 'one':
+        vehicle = request.GET.get('vehicle')
+
+        data = serializers.serialize('json', Binnacle.objects.filter(
+        datetime__range=(startDate, endDateB),
+        vehicle=vehicle),
+        use_natural_foreign_keys=True)
+
+        response_data['status'] = True
+        response_data['data'] = data
+
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+    else:
+        data = serializers.serialize('json', Binnacle.objects.filter(
+        datetime__range=(startDate, endDateB)),
+        use_natural_foreign_keys=True)
+
+        response_data['status'] = True
+        response_data['data'] = data
+
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@login_required(login_url='/accounts/login/')
+def generateFileXml(request):
+
+    object = request.POST.get('json')
+    object = json.loads(object)
+    startDate = request.POST.get('startDateB')
+    endDate = request.POST.get('endDateB')
+    now = timezone.now()
+    now = str(now)
+    now = now[:10]
+    """
+    path_file = settings.MEDIA_ROOT + '/bitacora-generate-at' + now + '.json'
+    with open(path_file, 'w') as file:
+        file.write(object_json)
+    """
+    #json.loads decoded JSON
+    #json.dumps encoded JSON
+    xmlString = xmltodict.unparse(json.loads(json.dumps(object)), pretty=True)
+    file_name = '/binnacles/bitacora-' + \
+        str(random.randrange(1, 10000000) + 1) + \
+        '-' + startDate +  '-at-' + endDate + '.xls'
+
+    path_file = settings.MEDIA_ROOT + file_name
+    with open(path_file, 'w') as file:
+        file.write(xmlString)
 
     response_data = {}
     response_data['status'] = True
-    response_data['data'] = "A"
+    response_data['file_name'] = file_name
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@login_required(login_url='/accounts/login/')
+def getCurrentMileagesVehicle(request):
+
+    vehicle_id = request.GET.get('id_vehicle')
+    current_mileages_vehicle = Binnacle.objects.filter(vehicle_id = vehicle_id).aggregate( \
+        Max('end_kilometer'))
+
+    response_data = {}
+    response_data['status'] = True
+    response_data['end_kilometer__max'] = current_mileages_vehicle['end_kilometer__max']
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+def generatePerformance(request):
+
+    startDate = request.POST.get('startDateP')
+    endDate = request.POST.get('endDateP')
+    vehicle = request.POST.get('vehicle')
+
+    data = serializers.serialize('json', Refuel.objects.filter(datetime__range=(startDate, endDate)), use_natural_foreign_keys=True)
+    data = json.loads(data)
+
+    array = []
+    vehicle = ""
+    for i in range(len(data)):
+        pk = data[i]['fields']['vehicle']['pk']
+        vehicleName = data[i]['fields']['vehicle']['name']
+        liters = data[i]['fields']['liters']
+        amount = data[i]['fields']['amount']
+
+        if vehicle != vehicleName:
+            object = { 'pk': pk, 'vehicle': vehicleName, 'liters': liters, 'amount': amount }
+            array.append(object)
+            vehicle = vehicleName
+        else:
+            for j in range(len(array)):
+                if vehicle == vehicleName:
+                    litersCount = float(liters) + float(array[j]['liters'])
+                    array[j]['liters'] = str(litersCount)
+                    amountCount = float(amount) + float(array[j]['amount'])
+                    array[j]['amount'] = str(amountCount)
+                    vehicle = vehicleName
+
+
+
+    for k in range(len(array)):
+        id_vehicle = array[k]['pk']
+        print('##########################')
+        print(id_vehicle)
+
+        #last kilometer register that vehicle
+        kmMax = Binnacle.objects.filter(datetime__range=(startDate, endDate), \
+        vehicle_id = id_vehicle).aggregate(Max('end_kilometer'))
+
+        #first kilometer register that vehicle
+        kmMin = Binnacle.objects.filter(datetime__range=(startDate, endDate), \
+        vehicle_id = id_vehicle).aggregate(Min('start_kilometer'))
+
+        print(kmMin)
+        print(kmMax)
+        kmTraveled = float(kmMax['end_kilometer__max']) - float(kmMin['start_kilometer__min'])
+        array[k]['mileages'] = kmTraveled
+        print('##########################')
+
+
+    print(array)
+    response_data = {}
+    response_data['status'] = True
+    response_data['data'] = json.dumps(array)
+    #print(response_data)
     return HttpResponse(json.dumps(response_data), content_type="application/json")

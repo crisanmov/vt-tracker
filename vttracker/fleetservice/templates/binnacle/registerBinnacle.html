@@ -18,6 +18,12 @@
           {{form.route}}
         </div>
         <div class="form-group">
+          <label for="vehicles">Vehiculo: </label>
+          <select class="form-control" id="vehiclesList">
+            <option value="0">Selecciona una opción</option>
+          </select>
+        </div>
+        <div class="form-group">
           {{form.start_kilometer.label_tag}}
           {{form.start_kilometer}}
         </div>
@@ -37,12 +43,6 @@
           {{form.end_time.label_tag}}
           {{form.end_time}}
         </div>
-        <div class="form-group">
-          <label for="vehicles">Vehiculo: </label>
-          <select class="form-control" id="vehiclesList">
-            <option value="0">Selecciona una opción</option>
-          </select>
-        </div>
         <br>
         <div class="btnSaveBinnacle">
           <button class="btn btn-info" type="submit" id="btnSaveBinnacle">Guardar</button>
@@ -51,7 +51,7 @@
     </div>
   </div>
   <script>
-  
+
   </script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script>
@@ -137,6 +137,31 @@
       formData['vehicle_id'] = vehicleSelected;
       //validation
       saveBinnacle(formData);
+    });
+
+    $j('#vehiclesList').change(function(){
+      let id_vehicle = $j(this).val();
+      $j.ajax({
+        type: 'GET',
+        data: {'id_vehicle': id_vehicle},
+        url: "{% url 'getCurrentMileagesVehicle' %}",
+        success: function(response){
+          console.log(response);
+          if(response.status){
+              let current_mileages = response.end_kilometer__max;
+              console.log(current_mileages);
+              $j('#id_start_kilometer').val(current_mileages);
+              $j('#id_start_kilometer').prop('readonly', true);
+              $j('#id_start_kilometer').css('color', 'green');
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+
     });
   </script>
 {% endblock %}

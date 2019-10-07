@@ -15,10 +15,16 @@ urlpatterns = [
     url(r'^get_services/$', views.getServices, name='getServices'),
     url(r'^create_driver/$', views.createDriver, name='createDriver'),
     url(r'^create_vehicle/$', views.createVehicle, name='createVehicle'),
-    url(r'^register_binnacle/$', views.registerBinnacle, name='registerBinnacle'),
+    url(r'^register_binnacle/$', views.registerBinnacle, \
+        name='registerBinnacle'),
     url(r'^register_refuel/$', views.registerRefuel, name='registerRefuel'),
     url(r'^register_service/$', views.registerService, name='registerService'),
     url(r'^binnacle_search/$', views.binnacleSearch, name='binnacleSearch'),
+    url(r'^export_file_xml/$', views.generateFileXml, name='generateFileXml'),
+    url(r'^get_current_mileages/$', views.getCurrentMileagesVehicle, \
+        name='getCurrentMileagesVehicle'),
+    url(r'^generate_performance/$', views.generatePerformance, \
+        name='generatePerformance'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

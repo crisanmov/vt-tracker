@@ -133,6 +133,7 @@
       </div>
       <hr>
       <div class="" id="content_service">
+
         <!--Elements for binnacles-->
         <div class="" id="elemBinnacles" style="display: none">
           <div class="" style="display: flex;">
@@ -150,16 +151,19 @@
               <input type="date" class="form-control" id="endDateB">
             </div>
             <div class="form-group form-perf">
-              <label for="vehicles">Vehiculo: </label>
-              <select class="form-control" id="vehicleList">
+              <input type="checkbox" name="vehicle" value=""
+              class="enableVehicle"> Vehiculo
+              <select class="form-control vehicleList" disabled>
                 <option value="0">Selecciona una opción</option>
               </select>
             </div>
             <div class="form-group form-perf">
               <label for="vehicles"></label><br>
               <a class="btn btn-success" href="#" id="btnSearchBinnacle">Buscar</a>
-              <a class="btn btn-success" href="#">Exportar</a>
             </div>
+          </div>
+          <div class="form-group">
+            <a class="btn btn-outline-danger" href="#" id="exportBinnacle" style="display: none;">Exportar</a>
           </div>
           <!--<a style="width: 20%;" class="btn btn-success" id ="btnNewDriver" data-toggle="modal">Nuevo Conductor</a><br>-->
           <table class="table table-striped">
@@ -170,7 +174,7 @@
               <th scope="col">Hora de inicio</th>
               <th scope="col">Hora fin</th>
               <th scope="col">Vehiculo</th>
-              <th scope="col">Conductor</th>
+              <th id="thDriver" scope="col">Conductor</th>
               <th scope="col"></th>
             </tr>
             <tbody id="tbodyBinnacle"></tbody>
@@ -313,33 +317,36 @@
           <br>
           <div class="form-performance" style="width: 100%; display:flex">
             <div class="form-group form-perf">
-              <label for="vehicles">Vehiculo: </label>
-              <select class="form-control" id="vehiclesList">
-                <option value="0">Selecciona una opción</option>
-              </select>
+              <label for="vehicles">Fecha inicio: </label>
+              <input type="date" class="form-control" id="startDateP">
             </div>
             <div class="form-group form-perf">
-              <label for="vehicles">Periodo de recarga: </label>
-              <select class="form-control" id="refuelList">
+              <label for="vehicles">Fecha fin: </label>
+              <input type="date" class="form-control" id="endDateP">
+            </div>
+            <!--<div class="form-group form-perf">
+              <input type="checkbox" name="vehicle" value=""
+               class="enableVehicle"> Vehiculo
+              <select class="form-control vehicleList" disabled>
                 <option value="0">Selecciona una opción</option>
               </select>
-            </div>
-
+            </div>-->
             <div class="form-group form-perf">
               <label for="vehicles"></label><br>
-              <a class="btn btn-success" href="#">Buscar</a>
-              <a class="btn btn-success" href="#">Exportar</a>
+              <a class="btn btn-success" href="#" id="btnGenerateP">Generar</a>
             </div>
           </div>
-          <br>
-          <h5>Resultados</h5><br>
+          <div class="form-group">
+            <a class="btn btn-outline-danger" href="#" id="exportPerformance" style="display: none;">Exportar</a>
+          </div>
+          <!--<h5 style="color: red;">Seleccionar periodo para ver rendimiento del vehiculo...</h5><br>-->
           <table class="table table-striped">
             <tr>
               <th scope="col">Vehiculo</th>
-              <th scope="col">Kilometros recorridos</th>
-              <th scope="col">Litros usados</th>
-              <th scope="col">Fechas</th>
-              <th scope="col"></th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Litros</th>
+              <th scope="col">Kilomentros recorridos</th>
+              <th scope="col">Importe</th>
             </tr>
             <tbody id="tbodyPerformance"></tbody>
           </table>
@@ -485,6 +492,7 @@
       let service = $(this);
       cleanContentServices(service);
       setColorSelect(service);
+      populateVehicles();
 
       document.querySelector('#elemPerformance').style.display = "block";
     });
@@ -563,23 +571,91 @@
 
     });
 
-
     $j('#btnSearchBinnacle').click(function(){
+
+      //validation
 
       let startDateB = document.querySelector('#startDateB').value;
       let endDateB = document.querySelector('#endDateB').value;
 
-      let vehiclesList = document.querySelector('#vehicleList');
-      let vehicle = vehiclesList.options[vehiclesList.selectedIndex].value;
-      let filter = {
-        'startDateB': startDateB,
-        'endDateB': endDateB,
-        'vehicle': vehicle,
-      };
+      if($j('.enableVehicle').prop('checked')){
+        let vehiclesList = document.querySelector('.vehicleList');
+        let vehicle = vehiclesList.options[vehiclesList.selectedIndex].value;
+        let filter = {
+          'startDateB': startDateB,
+          'endDateB': endDateB,
+          'vehicle': vehicle,
+          'option': 'one',
+        };
 
-      searchBinnacle(filter);
+        searchBinnacle(filter);
+      }else{
+        let filter = {
+          'startDateB': startDateB,
+          'endDateB': endDateB,
+        };
+
+        searchBinnacle(filter);
+      }
     });
 
+    $j('#btnGenerateP').click(function(){
+
+      let startDateP = document.querySelector('#startDateP').value;
+      let endDateP = document.querySelector('#endDateP').value;
+      let vehiclesList = document.querySelector('.vehicleList');
+      let vehicle = vehiclesList.options[vehiclesList.selectedIndex].value;
+
+      let filter ={
+        'startDateP': startDateP,
+        'endDateP': endDateP,
+        'vehicle': vehicle,
+        'csrfmiddlewaretoken': '{{ csrf_token }}',
+      };
+
+      $j.ajax({
+        type: 'POST',
+        url: "{% url 'generatePerformance' %}",
+        data: filter,
+        success: function(response){
+          if(response.status){
+            console.log(JSON.parse(response.data));
+            let data = JSON.parse(response.data);
+            //if data is empty
+            if(data.length === 0){
+              alert('No se encontraron resultados.')
+            }
+
+            let tbodyPerf = document.querySelector('#tbodyPerformance');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+              //console.log(data[i]);
+              let vehicle = data[i].vehicle;
+              let liters = data[i].liters;
+              let mileages = data[i].mileages;
+              let amount = data[i].amount;
+
+              content += "<tr><td>" + vehicle +
+                "</td><td>" + startDateP + " a " + endDateP +
+                "</td><td>"  + liters +
+                "</td><td>" + mileages +
+                "</td><td>" + amount + "</td></tr>";
+            }
+
+            tbodyPerf.innerHTML = content;
+            //document.querySelector('#elemPerformance').style.display = "block";
+
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+
+    });
 
 
     //#################utils#######################
@@ -659,6 +735,65 @@
       document.querySelector('#tbodyUser').innerHTML = '';
       getUsers();
     });
+
+    $j('.enableVehicle').change(function(){
+      if(this.checked){
+        $j('.vehicleList').prop('disabled', false);
+        $j('.vehicleList').focus();
+      }else{
+        $j('.vehicleList').prop('disabled', true);
+      }
+    });
+
+    $j('#exportBinnacle').click(function(){
+
+      let startDateB = $j('#startDateB').val();
+      let endDateB = $j('#endDateB').val();
+      let data = JSON.parse(localStorage.getItem('data'));
+      let json = {
+        'binnacles':{
+          'binnacle': [
+
+          ]
+        }
+      };
+      let binnacle = [];
+
+      for(let i=0; i<data.length; i++){
+        binnacle.push(data[i].fields);
+      }
+      json.binnacles.binnacle = binnacle;
+
+      //validation
+      $j.ajax({
+        type: 'POST',
+        url: "{% url 'generateFileXml' %}",
+        data: {
+          'json': JSON.stringify(json),
+          'csrfmiddlewaretoken': '{{ csrf_token }}',
+          'startDateB': startDateB,
+          'endDateB': endDateB,
+         },
+        success: function(response){
+          if(response.status){
+            let file_name = 'media/' + response.file_name;
+            let a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = file_name;
+            a.download = file_name.slice(7);
+            document.body.appendChild(a);
+            a.click();
+
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+    });
+
 
     //#################funcionts for modal#######################
 
@@ -754,7 +889,7 @@
         success: function(response){
           if(response.status){
             let data = JSON.parse(response.data);
-            let vehiclesList = $('#vehicleList');
+            let vehiclesList = $('.vehicleList');
 
             for(let i=0; i<data.length; i++){
               let vehicle = data[i].fields.alias;
@@ -826,7 +961,7 @@
         type: 'GET',
         url: "{% url 'getBinnacles' %}",
         success: function(response){
-          console.log(response);
+          //console.log(response);
           if(response.status){
             let data = JSON.parse(response.data);
 
@@ -921,52 +1056,60 @@
       });
     }
 
-    function getRefuels(){
+    function getRefuels(...args){
 
-      $j.ajax({
-        type: 'GET',
-        url: "{% url 'getRefuels' %}",
-        success: function(response){
+      console.log(args.length);
 
-          if(response.status){
-            let data = JSON.parse(response.data);
-            console.log(data);
+      if(args.length == 0){
+        $j.ajax({
+          type: 'GET',
+          url: "{% url 'getRefuels' %}",
+          success: function(response){
 
-            //if data is empty
-            if(data.length === 0){
-              alert('No hay recargas registradas en el sistema.')
+            if(response.status){
+              let data = JSON.parse(response.data);
+              //console.log(data);
+
+              //if data is empty
+              if(data.length === 0){
+                alert('No hay recargas registradas en el sistema.')
+              }
+
+              let tbodyRefuel = document.querySelector('#tbodyRefuel');
+              let content = "";
+
+              for(let i=0; i<data.length; i++){
+                //console.log(data[i]);
+                let pk = data[i].pk;
+                let datetime = data[i].fields.datetime.slice(0,10);
+                let liters = data[i].fields.liters;
+                let amount = data[i].fields.amount;
+                let vehicle = data[i].fields.vehicle.name;
+                let voucher = data[i].fields.image;
+
+                content += "<tr><td>" + pk +
+                  "</td><td>" + datetime +
+                  "</td><td>"  + liters +
+                  "</td><td>" + amount +
+                  "</td><td>" + vehicle +
+                  "</td><td><a href='media/" + voucher + "'>Ver comprobante</a></td></tr>";
+              }
+
+              tbodyRefuel.innerHTML = content;
+              document.querySelector('#elemRefuel').style.display = "block";
+            }else{
+              alert(response.msgError);
             }
-
-            let tbodyRefuel = document.querySelector('#tbodyRefuel');
-            let content = "";
-
-            for(let i=0; i<data.length; i++){
-              //console.log(data[i]);
-              let pk = data[i].pk;
-              let datetime = data[i].fields.datetime.slice(0,10);
-              let liters = data[i].fields.liters;
-              let amount = data[i].fields.amount;
-              let vehicle = data[i].fields.vehicle.name;
-              let voucher = data[i].fields.image;
-
-              content += "<tr><td>" + pk +
-                "</td><td>" + datetime +
-                "</td><td>"  + liters +
-                "</td><td>" + amount +
-                "</td><td>" + vehicle +
-                "</td><td><a href='media/" + voucher + "'>Ver comprobante</a></td></tr>";
-            }
-
-            tbodyRefuel.innerHTML = content;
-            document.querySelector('#elemRefuel').style.display = "block";
-          }else{
-            alert(response.msgError);
+          },
+          error: function(e){
+            console.log(e);
           }
-        },
-        error: function(e){
-          console.log(e);
-        }
-      });
+        });
+      }else{
+
+      }
+
+
 
     }
 
@@ -1026,7 +1169,42 @@
         data: filter,
         success: function(response){
           if(response.status){
+            //console.log(JSON.parse(response.data));
+            let data = JSON.parse(response.data);
 
+            if(data.length === 0){
+              alert('No se encontraron resultados.')
+            }
+
+            document.querySelector('#exportBinnacle').style.display = 'block';
+            let tbodyBinnacle = document.querySelector('#tbodyBinnacle');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+              //console.log(data[i]);
+              let pk = data[i].pk;
+              let route = data[i].fields.route;
+              let start_time = data[i].fields.start_time;
+              let datetime = data[i].fields.datetime.slice(0, 10);
+              let end_time = data[i].fields.end_time;
+              let vehicle = data[i].fields.vehicle.name;
+              let end_kilometer = data[i].fields.end_kilometer;
+              let start_kilometer = data[i].fields.start_kilometer;
+              let result_km = parseInt(end_kilometer) - parseInt(start_kilometer);
+
+              document.querySelector('#thDriver').innerHTML = "Kilometros recorridos";
+
+              content += "<tr><td>" + pk +
+                "</td><td>" + route +
+                "</td><td>"  + datetime +
+                "</td><td>"  + start_time +
+                "</td><td>" + end_time +
+                "</td><td>" + vehicle +
+                "</td><td>" + result_km + 'km' + "</td></tr>";
+            }
+            tbodyBinnacle.innerHTML = content;
+
+            localStorage.setItem('data', JSON.stringify(data));
 
           }else{
             alert(response.msgError);
