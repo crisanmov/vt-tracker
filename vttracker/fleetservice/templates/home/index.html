@@ -32,9 +32,20 @@
     margin: 5px;
   }
   .content-pagination{
-
     margin: 0 auto;
   }
+
+  tbody {
+      display:block;
+      height:350px;
+      overflow:auto;
+  }
+  thead, tbody tr {
+      display:table;
+      width:100%;
+      table-layout:fixed;/* even columns width , fix width of table too*/
+  }
+
 </style>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 {% endblock %}
@@ -166,41 +177,27 @@
             <a class="btn btn-outline-danger" href="#" id="exportBinnacle" style="display: none;">Exportar</a>
           </div>
           <!--<a style="width: 20%;" class="btn btn-success" id ="btnNewDriver" data-toggle="modal">Nuevo Conductor</a><br>-->
+
           <table class="table table-striped">
-            <tr>
-              <th scope="col"># ID</th>
-              <th scope="col">Ruta</th>
-              <th scope="col">Fecha</th>
-              <th scope="col">Hora de inicio</th>
-              <th scope="col">Hora fin</th>
-              <th scope="col">Vehiculo</th>
-              <th id="thDriver" scope="col">Conductor</th>
-              <th scope="col"></th>
-            </tr>
-            <tbody id="tbodyBinnacle"></tbody>
+            <thead>
+              <tr>
+                <th scope="col"># ID</th>
+                <th scope="col">Ruta</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Hora de inicio</th>
+                <th scope="col">Hora fin</th>
+                <th scope="col">Vehiculo</th>
+                <th id="thDriver" scope="col">Conductor</th>
+
+              </tr>
+            </thead>
+            <div class="table-container">
+              <tbody id="tbodyBinnacle"></tbody>
+            </div>
           </table>
-          <br>
-          <div class="content-pagination">
-            <nav aria-label="Page navigation example">
-              <ul class="pagination">
-                <li class="page-item">
-                  <a class="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </a>
-                </li>
-                <!--
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                -->
-                <li class="page-item">
-                  <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
+
+        <br><br><br>
+
         </div>
 
         <!--Elements for drivers-->
@@ -212,15 +209,16 @@
           <br>
           <a style="width: 20%;" class="btn btn-success" id ="btnNewDriver" data-toggle="modal">Nuevo Conductor</a><br>
           <table class="table table-striped">
-            <tr>
-              <th scope="col"># ID</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Numero de licencia</th>
-              <th scope="col">Fecha expedición</th>
-              <th scope="col">Fecha expiración</th>
-              <th scope="col">Telefono</th>
-              <th scope="col"></th>
-            </tr>
+            <thead>
+              <tr>
+                <th scope="col"># ID</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Numero de licencia</th>
+                <th scope="col">Fecha expedición</th>
+                <th scope="col">Fecha expiración</th>
+                <th scope="col">Telefono</th>
+              </tr>
+            </thead>
             <tbody id="tbodyDriver"></tbody>
           </table>
         </div>
@@ -233,16 +231,18 @@
           </div>
           <br>
           <table class="table table-striped">
-            <tr>
-              <th scope="col"># ID</th>
-              <th scope="col">Asunto</th>
-              <th scope="col">Solicitante</th>
-              <th scope="col">Fecha</th>
-              <th scope="col">Hora inicio</th>
-              <th scope="col">Hora fin</th>
-              <th scope="col">Conductor</th>
-              <th scope="col">Description</th>
-            </tr>
+            <thead>
+              <tr>
+                <th scope="col"># ID</th>
+                <th scope="col">Asunto</th>
+                <th scope="col">Solicitante</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Hora inicio</th>
+                <th scope="col">Hora fin</th>
+                <th scope="col">Conductor</th>
+                <th scope="col">Description</th>
+              </tr>
+            </thead>
             <tbody id="tbodyServices"></tbody>
           </table>
         </div>
@@ -257,13 +257,14 @@
           <a style="display:none; width: 20%;" class="btn btn-success" id ="btnNewVehicle" data-toggle="modal">Nuevo Vehiculo</a>
           <br>
           <table class="table table-striped">
-            <tr>
-              <th scope="col"># ID</th>
-              <th scope="col">Matricula</th>
-              <th scope="col">Alias</th>
-              <th scope="col">Fecha de Servicio</th>
-              <th scope="col"></th>
-            </tr>
+            <thead>
+              <tr>
+                <th scope="col"># ID</th>
+                <th scope="col">Matricula</th>
+                <th scope="col">Alias</th>
+                <th scope="col">Fecha de Servicio</th>
+              </tr>
+            </thead>
             <tbody id="tbodyVehicle"></tbody>
           </table>
         </div>
@@ -276,17 +277,19 @@
           </div>
           <br>
           <table class="table table-striped">
-            <tr>
-              <th scope="col"># ID</th>
-              <th scope="col">Fecha</th>
-              <th scope="col">Litros</th>
-              <th scope="col">Importe</th>
-              <th scope="col">Vehiculo</th>
-              <th scope="col">Comprobante</th>
-              <th scope="col"></th>
-            </tr>
+            <thead>
+              <tr>
+                <th scope="col"># ID</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Litros</th>
+                <th scope="col">Importe</th>
+                <th scope="col">Vehiculo</th>
+                <th scope="col">Comprobante</th>
+              </tr>
+            </thead>
             <tbody id="tbodyRefuel"></tbody>
           </table>
+          <br><br><br>
         </div>
 
         <!--Elements for Users-->
@@ -299,14 +302,15 @@
           </div>
           <br>
           <table class="table table-striped">
-            <tr>
-              <th scope="col"># ID</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Email</th>
-              <th scope="col">Telefono</th>
-              <th scope="col">Dirección</th>
-              <th scope="col"></th>
-            </tr>
+            <thead>
+              <tr>
+                <th scope="col"># ID</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Email</th>
+                <th scope="col">Telefono</th>
+                <th scope="col">Dirección</th>
+              </tr>
+            </thead>
             <tbody id="tbodyUser"></tbody>
           </table>
         </div>
@@ -341,13 +345,15 @@
           </div>
           <!--<h5 style="color: red;">Seleccionar periodo para ver rendimiento del vehiculo...</h5><br>-->
           <table class="table table-striped">
-            <tr>
-              <th scope="col">Vehiculo</th>
-              <th scope="col">Fecha</th>
-              <th scope="col">Litros</th>
-              <th scope="col">Kilomentros recorridos</th>
-              <th scope="col">Importe</th>
-            </tr>
+            <thead>
+              <tr>
+                <th scope="col">Vehiculo</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Litros</th>
+                <th scope="col">Kilomentros recorridos</th>
+                <th scope="col">Importe</th>
+              </tr>
+            </thead>
             <tbody id="tbodyPerformance"></tbody>
           </table>
         </div>
@@ -975,7 +981,8 @@
 
             for(let i=0; i<data.length; i++){
               //console.log(data[i]);
-              let pk = data[i].pk;
+              //let pk = data[i].pk;
+              let id = i + 1;
               let route = data[i].fields.binnacle.route;
               let start_time = data[i].fields.binnacle.start_time;
               let datetime = data[i].fields.binnacle.datetime.slice(0, 10);
@@ -983,7 +990,7 @@
               let vehicle = data[i].fields.binnacle.vehicle.alias;
               let driver = data[i].fields.driver.name;
 
-              content += "<tr><td>" + pk +
+              content += "<tr><td>" + id +
                 "</td><td>" + route +
                   "</td><td>"  + datetime +
                 "</td><td>"  + start_time +
@@ -1025,7 +1032,8 @@
 
             for(let i=0; i<data.length; i++){
               //console.log(data[i]);
-              let pk = data[i].pk;
+              //let pk = data[i].pk;
+              let id = i + 1;
               let subject = data[i].fields.service.subject;
               let from_depto = data[i].fields.service.from_depto;
               let datetime = data[i].fields.service.datetime.slice(0,10);
@@ -1034,7 +1042,7 @@
               let driver = data[i].fields.driver.name;
               let description = data[i].fields.service.description;
 
-              content += "<tr><td>" + pk +
+              content += "<tr><td>" + id +
                 "</td><td>" + subject +
                 "</td><td>"  + from_depto +
                 "</td><td>" + datetime +

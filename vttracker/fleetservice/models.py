@@ -2,6 +2,31 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+class Vehicle(models.Model):
+    id_vehicle = models.AutoField(primary_key=True)
+    enrollment = models.CharField(max_length=50, blank=False, null=False)
+    alias = models.CharField(max_length=20, blank=False, null=False)
+    data_service = models.DateTimeField(max_length=6, blank = False, null=True)
+
+    REQUIRED_FIELDS = ['id_vehicle', 'enrollment', 'alias']
+
+    class Meta:
+        verbose_name = _('vehiculo')
+        verbose_name_plural = _('vehiculos')
+        db_table = ('vehicle')
+
+    def __str__(self):
+        return self.enrollment
+
+    def natural_key(self):
+        object = {
+            "pk": self.id_vehicle,
+            "name": self.alias,
+            "enrollment": self.enrollment,
+            "data_service": self.data_service,
+            }
+        return object
+
 class Service(models.Model):
     id_service = models.AutoField(primary_key=True)
     subject = models.CharField(max_length=70, blank=False, null=False)
@@ -12,6 +37,9 @@ class Service(models.Model):
     start_time = models.TimeField(max_length=6, blank = False, null=False)
     end_time = models.TimeField(max_length=6, blank = False, null=False)
     description = models.CharField(max_length=160, blank=False, null=False)
+
+    #Relationship DB
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, null=True)
 
     REQUIRED_FIELDS = ['id_service', 'subject', 'from_depto',
                         'start_kilometer', 'end_kilometer', 'datetime',
@@ -39,31 +67,6 @@ class Service(models.Model):
             }
         return object
 
-class Vehicle(models.Model):
-    id_vehicle = models.AutoField(primary_key=True)
-    enrollment = models.CharField(max_length=50, blank=False, null=False)
-    alias = models.CharField(max_length=20, blank=False, null=False)
-    data_service = models.DateTimeField(max_length=6, blank = False, null=True)
-
-    REQUIRED_FIELDS = ['id_vehicle', 'enrollment', 'alias']
-
-    class Meta:
-        verbose_name = _('vehiculo')
-        verbose_name_plural = _('vehiculos')
-        db_table = ('vehicle')
-
-    def __str__(self):
-        return self.enrollment
-
-    def natural_key(self):
-        object = {
-            "pk": self.id_vehicle,
-            "name": self.alias,
-            "enrollment": self.enrollment,
-            "data_service": self.data_service,
-            }
-        return object
-
 class Binnacle(models.Model):
 
     ROUTES = (
@@ -84,7 +87,15 @@ class Binnacle(models.Model):
     #Relationship DB
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
 
-    REQUIRED_FIELDS = ['id_binacle', 'route', 'start_kilometer','end_kilometer', 'datetime', 'start_time', 'end_time']
+    REQUIRED_FIELDS = [
+        'id_binacle',
+        'route',
+        'start_kilometer',
+        'end_kilometer',
+        'datetime',
+        'start_time',
+        'end_time'
+        ]
 
     class Meta:
         verbose_name = _('bitacora')

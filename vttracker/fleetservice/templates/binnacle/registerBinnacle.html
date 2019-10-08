@@ -140,16 +140,23 @@
     });
 
     $j('#vehiclesList').change(function(){
-      let id_vehicle = $j(this).val();
+      let id_vehicle = $j('#vehiclesList option:selected').text();
       $j.ajax({
         type: 'GET',
-        data: {'id_vehicle': id_vehicle},
+        data: {'vehicle': id_vehicle, 'from_file': true},
         url: "{% url 'getCurrentMileagesVehicle' %}",
         success: function(response){
           console.log(response);
           if(response.status){
-              let current_mileages = response.end_kilometer__max;
-              console.log(current_mileages);
+
+              //let current_mileages = response.end_kilometer__max;
+              let current_mileages = response.current_mileages;
+              //console.log(current_mileages);
+
+              if(current_mileages == 'null'){
+                $j('#id_start_kilometer').prop('readonly', false);
+              }
+
               $j('#id_start_kilometer').val(current_mileages);
               $j('#id_start_kilometer').prop('readonly', true);
               $j('#id_start_kilometer').css('color', 'green');

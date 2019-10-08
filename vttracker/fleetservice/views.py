@@ -78,17 +78,25 @@ def getDrivers(request):
 def getBinnacles(request):
     response_data = {}
 
-    data = serializers.serialize('json', DriverBinacle.objects.all(), use_natural_foreign_keys=True)
+    data = serializers.serialize('json', \
+        DriverBinacle.objects.all().order_by('binnacle_id')[::-1], \
+        use_natural_foreign_keys=True)
+
     response_data['status'] = True
     response_data['data'] = data
     response_data['msg'] = "QuerySet Status::Done"
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    return HttpResponse(json.dumps(response_data), \
+        content_type="application/json")
 
 @login_required(login_url='/accounts/login/')
 def getServices(request):
     response_data = {}
 
-    data = serializers.serialize('json', DriverService.objects.all(), use_natural_foreign_keys=True)
+    data = serializers.serialize('json', \
+        DriverService.objects.all().order_by('service_id')[::-1], \
+        use_natural_foreign_keys=True)
+
     response_data['status'] = True
     response_data['data'] = data
     response_data['msg'] = "QuerySet Status::Done"
@@ -132,10 +140,14 @@ def getUsers(resquest):
 def getRefuels(requests):
     response_data = {}
 
-    data = serializers.serialize('json', Refuel.objects.all(), use_natural_foreign_keys=True)
+    data = serializers.serialize('json', \
+        Refuel.objects.all().order_by('id_refuel')[::-1], \
+        use_natural_foreign_keys=True)
+
     response_data['status'] = True
     response_data['data'] = data
     response_data['msg'] = "QuerySet Status::Done"
+    
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @login_required(login_url='/accounts/login/')
@@ -198,9 +210,11 @@ def registerBinnacle(request):
 
         if form.is_valid():
             vehicle = Vehicle.objects.get(pk=request.POST.get('vehicle_id'))
+
             binnacle = form.save(commit=False)
             binnacle.vehicle = vehicle
             binnacle.save()
+
             #***************save relation m2m***************************
             driver = Driver.objects.get(user=request.user.pk)
             DriverBinacle.objects.create(driver=driver, binnacle=binnacle, \
@@ -271,12 +285,26 @@ def registerService(request):
         form = ServiceForm(request.POST)
         response_data = {}
         if form.is_valid():
+            vehicle = Vehicle.objects.get(pk=request.POST.get('vehicle_id'))
+
             service = form.save(commit=False)
+            service.vehicle = vehicle
             service.save()
+
             #***************save relation m2m*****************
             driver = Driver.objects.get(user=request.user.pk)
             DriverService.objects.create(driver=driver, service=service, date_joined=timezone.now())
             #*************************************************
+
+            #******************save file with current mileages**********
+            vehicle = 'kilometraje-actual-' + vehicle.alias
+            current_mileages = str(service.end_kilometer)
+
+            path_file = settings.MEDIA_ROOT + '/current_mileages/' + vehicle + '.txt'
+            with open(path_file, 'w') as file:
+                file.write(current_mileages)
+            #***********************************************************
+
             response_data['status'] = True
             response_data['msg'] = "Encomienda registrada exitosamente"
             return HttpResponse(json.dumps(response_data), content_type="application/json")
@@ -352,16 +380,29 @@ def generateFileXml(request):
 
 @login_required(login_url='/accounts/login/')
 def getCurrentMileagesVehicle(request):
-
-    vehicle_id = request.GET.get('id_vehicle')
-    current_mileages_vehicle = Binnacle.objects.filter(vehicle_id = vehicle_id).aggregate( \
-        Max('end_kilometer'))
-
     response_data = {}
-    response_data['status'] = True
-    response_data['end_kilometer__max'] = current_mileages_vehicle['end_kilometer__max']
+    print(request.GET.get('vehicle'))
+    if request.GET.get('from_file'):
 
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+        filename = 'kilometraje-actual-' + request.GET.get('vehicle')
+        path_file = settings.MEDIA_ROOT + '/current_mileages/' + filename + '.txt'
+
+        f = open(path_file, "r")
+        if f.mode == 'r':
+            current_mileages = f.read()
+
+        response_data['status'] = True
+        response_data['current_mileages'] = current_mileages
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+    else:
+        vehicle_id = request.GET.get('id_vehicle')
+        current_mileages_vehicle = Binnacle.objects.filter(vehicle_id = vehicle_id).aggregate( \
+            Max('end_kilometer'))
+
+        response_data['status'] = True
+        response_data['end_kilometer__max'] = current_mileages_vehicle['end_kilometer__max']
+
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def generatePerformance(request):
 
@@ -388,8 +429,10 @@ def generatePerformance(request):
             for j in range(len(array)):
                 if vehicle == vehicleName:
                     litersCount = float(liters) + float(array[j]['liters'])
+                    litersCount = round(litersCount, 2)
                     array[j]['liters'] = str(litersCount)
                     amountCount = float(amount) + float(array[j]['amount'])
+                    amountCount = round(amountCount, 2)
                     array[j]['amount'] = str(amountCount)
                     vehicle = vehicleName
 

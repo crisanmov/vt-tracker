@@ -24,6 +24,12 @@
         {{form.from_depto}}
       </div>
       <div class="form-group">
+        <label for="vehicles">Vehiculo: </label>
+        <select class="form-control" id="vehiclesList">
+          <option value="0">Selecciona una opción</option>
+        </select>
+      </div>
+      <div class="form-group">
         {{form.start_kilometer.label_tag}}
         {{form.start_kilometer}}
       </div>
@@ -59,6 +65,7 @@
   var $j = jQuery.noConflict();
 
   changesTypesInput();
+  getVehicles();
 
   function changesTypesInput(){
     $('#timeS').attr('type', 'time');
@@ -95,17 +102,74 @@
     });
   }
 
+  function getVehicles(){
+    $j.ajax({
+      type: 'GET',
+      url: "{% url 'getVehicles' %}",
+      success: function(response){
+        if(response.status){
+          let data = JSON.parse(response.data);
+          let vehiclesList = $('#vehiclesList');
+
+          for(let i=0; i<data.length; i++){
+            let vehicle = data[i].fields.alias;
+            let option = document.createElement('option');
+
+            option.text = vehicle;
+            option.setAttribute('value', data[i].pk);
+            vehiclesList.append(option);
+          }
+        }else{
+          alert(response.msgError);
+        }
+      },
+      error: function(e){
+        console.log(e);
+      }
+    });
+  }
+
   $j('#btnSaveservice').click(function(e){
     e.preventDefault();
 
     //validation
     let form = $j('#formSaveService');
     let formData = jsonFormat(form.serializeArray());
-    console.log(formData);
-
+    formData['vehicle_id'] = $j('#vehiclesList').val();
+    
     saveService(formData);
   });
 
+  $j('#vehiclesList').change(function(){
+    let id_vehicle = $j(this).val();
+
+    $j.ajax({
+      type: 'GET',
+      data: {'vehicle': $j('#vehiclesList option:selected').text(), 'from_file': true},
+      url: "{% url 'getCurrentMileagesVehicle' %}",
+      success: function(response){
+        console.log(response);
+        if(response.status){
+            let current_mileages = response.current_mileages;
+            console.log(current_mileages);
+
+            if(current_mileages == 'null'){
+              $j('#id_start_kilometer').prop('readonly', false);
+            }
+
+            $j('#id_start_kilometer').val(current_mileages);
+            $j('#id_start_kilometer').prop('readonly', true);
+            $j('#id_start_kilometer').css('color', 'green');
+        }else{
+          alert(response.msgError);
+        }
+      },
+      error: function(e){
+        console.log(e);
+      }
+    });
+
+  });
 
 
 </script>
