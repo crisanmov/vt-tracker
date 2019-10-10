@@ -38,9 +38,26 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   </head>
   <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background-color: #e3f2fd;">
+      <a class="navbar-brand" href="/">VTtracker</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          {% if user.is_superuser %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'fleetAdmin' %}">Administrar Flotilla</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/accounts/logout">Cerra Sesión</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
     <div class="">
-    		<h3>Nuevo Usuario</h3>
-        <br>
+    		<h4>Nuevo Usuario</h4>
         <div class="form">
           <div id="msgErrors">
 

@@ -103,6 +103,85 @@
       });
     }
 
+    function checkForm(form){
+
+      let result = [];
+
+      if(form.start_kilometer.value == ""){
+
+        //form.start_kilometer.focus();
+        form.start_kilometer.value = "El campo esta vació.";
+        form.start_kilometer.style.color = "red";
+        form.start_kilometer.style.borderColor = "red";
+
+        result.push(false);
+      }
+
+      if(form.end_kilometer.value == ""){
+
+        //form.end_kilometer.focus();
+        form.end_kilometer.value = "El campo esta vació.";
+        form.end_kilometer.style.color = "red";
+        form.end_kilometer.style.borderColor = "red";
+
+        result.push(false);
+      }
+
+      if(form.start_time.value == ""){
+
+        //form.end_kilometer.focus();
+        form.start_time.value = "El campo esta vació.";
+        form.start_time.style.color = "red";
+        form.start_time.style.borderColor = "red";
+
+        result.push(false);
+      }
+
+      var re = /^[+-]?\d+(\.\d+)?$/;
+
+      if(!re.test(form.start_kilometer.value)){
+        console.log("entra");
+        //form.start_kilometer.focus();
+        form.start_kilometer.value = "El campo debe contener solo números.";
+        form.start_kilometer.style.color = "red";
+
+        result.push(false);
+      }
+
+      if(!re.test(form.end_kilometer.value)){
+
+        //form.end_kilometer.focus();
+        form.end_kilometer.value = "El campo debe contener solo números.";
+        form.end_kilometer.style.color = "red";
+
+        result.push(false);
+      }
+
+    }
+
+    function checkFormNumber(form){
+      let result = [];
+      var re = /^[+-]?\d+(\.\d+)?$/;
+
+      if(!re.test(form.start_kilometer.value)){
+    
+        form.start_kilometer.focus();
+        form.start_kilometer.value = "El campo debe contener solo numeros.";
+        form.start_kilometer.style.color = "red";
+
+        result.push(false);
+      }
+
+      if(!re.test(form.end_kilometer.value)){
+
+        form.end_kilometer.focus();
+        form.end_kilometer.value = "El campo debe contener solo numeros.";
+        form.end_kilometer.style.color = "red";
+
+        result.push(false);
+      }
+    }
+
     function saveBinnacle(formData){
       let form = $j('#formSaveBinnacle');
 
@@ -111,10 +190,11 @@
         url: form.attr('action'),
         data: formData,
         success: function(response){
-          console.log(response);
+          //console.log(response);
           if(response.status){
             alert(response.msg);
-
+          }else{
+            console.log(response.errors);
           }
         },
         error: function(e){
@@ -127,15 +207,16 @@
     $j('#btnSaveBinnacle').click(function(e){
       e.preventDefault();
 
+      checkForm(document.querySelector('#formSaveBinnacle'));
+      //checkFormNumber(document.querySelector('#formSaveBinnacle'));
+
+      return;
       let form = $j('#formSaveBinnacle');
       let formData = jsonFormat(form.serializeArray());
-      console.log(formData);
-
       let vehiclesList = document.querySelector('#vehiclesList');
       let vehicleSelected = vehiclesList.options[vehiclesList.selectedIndex].value;
 
       formData['vehicle_id'] = vehicleSelected;
-      //validation
       saveBinnacle(formData);
     });
 
@@ -170,5 +251,12 @@
       });
 
     });
+
+    //##################  UTILS  ########################
+    $j(':input').keypress(function(){
+      $j(this).css('color', 'black');
+      $j(this).css('border-color', '');
+    });
+
   </script>
 {% endblock %}

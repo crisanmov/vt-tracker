@@ -5,7 +5,7 @@ import simplejson as json
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 
-#@login_required(redirect_field_name='accounts/login')
+@login_required(redirect_field_name='accounts/login')
 def register(request):
 
 	if request.method == 'POST':
