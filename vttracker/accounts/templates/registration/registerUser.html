@@ -115,57 +115,7 @@
         </div>
     </div>
   </body>
-  <script>
-
-    function jsonFormat(formArray) {
-      let returnArray = {};
-      for (let i=0;i<formArray.length;i++) {
-          if (formArray[i].value) {
-              returnArray[formArray[i].name] = formArray[i].value;
-          }
-      }
-      return returnArray;
-    }
-
-    $('#btnSaveUser').click(function(e){
-      e.preventDefault();
-
-      let form = $('#formSaveUser');
-      let formData = jsonFormat($("#formSaveUser").serializeArray());
-      //console.log(formData);
-
-      $.ajax({
-        data: formData,
-        type: form.attr('method'),
-        url: form.attr('action'),
-        success: function(response){
-          if(response.status){
-            alert(response.msg);
-            window.location.replace("http://127.0.0.1:8000/accounts/register/");
-          }
-
-          if(!response.status){
-            let errors = response.errors;
-            let string = "";
-
-            for(field in errors){
-              let typeErrors = errors[field];
-
-              for(let i=0; i < typeErrors.length; i++){
-                  string = " " + typeErrors[i];
-              }
-
-              alert(field + ":" + string);
-              string = "";
-            }
-          }
-        },
-        error: function(e){
-          console.log(e);
-        }
-      });
-    });
-
-
-  </script>
+  {% load static %}
+  <script src="{% static 'js/FormValidation.js' %}"></script>
+  <script src="{% static 'js/registerUser.js' %}"></script>
 </html>

@@ -30,7 +30,7 @@
       </div>
       <div class="form-group">
         <label for="vehicles">Vehiculo: </label>
-        <select class="form-control" id="vehiclesList">
+        <select class="form-control" id="vehiclesList" name="vehiclesList">
           <option value="0">Selecciona una opción</option>
         </select>
       </div>
@@ -46,122 +46,12 @@
   </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+{% load static %}
+<script src="{% static 'js/FormValidation.js' %}"></script>
 <script>
-  var $j = jQuery.noConflict();
-  getVehicles();
-
-  var object_file = {};
-
-  $j('input:file').change(function(e){
-
-    let hasFile = $j('input:file').toArray().some(function(file) {
-      object_file['image'] = e.target.files[0];
-      return file.value;
-    });
-
-    $j('#btnSaveRefuel').prop('disabled', !hasFile);
-  });
-
-
-  $j('#datepickerA').attr('type', 'date');
-
-  function jsonFormat(formArray) {
-    let returnArray = {};
-    for (let i=0;i<formArray.length;i++) {
-        if (formArray[i].value) {
-            returnArray[formArray[i].name] = formArray[i].value;
-        }
-    }
-    return returnArray;
-  }
-
-  function saveRefuel(formData){
-    let form = $j('#formSaveRefuel');
-
-    $j.ajax({
-      type: form.attr('method'),
-      url: form.attr('action'),
-      data: JSON.stringify(formData),
-      success: function(response){
-        console.log(response);
-        if(response.status){
-          alert(response.msg);
-        }
-        else{
-          alert(response.errors);
-        }
-      },
-      error: function(e){
-        console.log(e);
-      }
-    });
-  }
-
-  function getVehicles(){
-    $j.ajax({
-      type: 'GET',
-      url: "{% url 'getVehicles' %}",
-      success: function(response){
-        if(response.status){
-          let data = JSON.parse(response.data);
-          let vehiclesList = $('#vehiclesList');
-          for(let i=0; i<data.length; i++){
-            let vehicle = data[i].fields.alias;
-            let option = document.createElement('option');
-
-            option.text = vehicle;
-            option.setAttribute('value', data[i].pk);
-            vehiclesList.append(option);
-          }
-        }else{
-          alert(response.msgError);
-        }
-      },
-      error: function(e){
-        console.log(e);
-      }
-    });
-  }
-
-  $j('#formSaveRefuel').submit(function(e){
-    e.preventDefault();
-    let form = $j('#formSaveRefuel');
-
-    let vehiclesList = document.querySelector('#vehiclesList');
-    var data = new FormData(form.get(0));
-
-    data.append('vehicle_id', vehiclesList.options[vehiclesList.selectedIndex].value);
-
-    console.log(data.getAll('csrfmiddlewaretoken'));
-    console.log(data.getAll('image'));
-    console.log(data.getAll('amount'));
-    console.log(data.getAll('vehicle_id'));
-
-    //var csrftoken = $j("[name=csrfmiddlewaretoken]").val();
-    //var json_data = {'csrfmiddlewaretoken' : csrftoken, 'file': formData };
-
-
-    $j.ajax({
-      type: form.attr('method'),
-      url: form.attr('action'),
-      data: data,
-      cache: false,
-      processData: false,
-      contentType: false,
-      success: function(response){
-        console.log(response);
-        if(response.status){
-          alert(response.msg);
-        }
-        else{
-          alert(response.errors);
-        }
-      },
-      error: function(e){
-        console.log(e);
-      }
-    });
-  });
-
+  var Dictionary = {
+    'getVehicles': {% url 'getVehicles' %},
+  };
 </script>
+<script src="{% static 'js/registerRefuel.js' %}"></script>
 {% endblock %}

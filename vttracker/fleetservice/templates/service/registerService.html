@@ -25,7 +25,7 @@
       </div>
       <div class="form-group">
         <label for="vehicles">Vehiculo: </label>
-        <select class="form-control" id="vehiclesList">
+        <select class="form-control" id="vehiclesList" name="vehiclesList">
           <option value="0">Selecciona una opción</option>
         </select>
       </div>
@@ -61,117 +61,14 @@
   </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+{% load static %}
+<script src="{% static 'js/FormValidation.js' %}"></script>
 <script>
-  var $j = jQuery.noConflict();
-
-  changesTypesInput();
-  getVehicles();
-
-  function changesTypesInput(){
-    $('#timeS').attr('type', 'time');
-    $('#timeE').attr('type', 'time');
-    $('#datepickerS').attr('type', 'date');
-  }
-
-  function jsonFormat(formArray) {
-    let returnArray = {};
-    for (let i=0;i<formArray.length;i++) {
-        if (formArray[i].value) {
-            returnArray[formArray[i].name] = formArray[i].value;
-        }
-    }
-    return returnArray;
-  }
-
-  function saveService(formData){
-    let form = $j('#formSaveService');
-
-    $j.ajax({
-      type: form.attr('method'),
-      url: form.attr('action'),
-      data: formData,
-      success: function(response){
-        console.log(response);
-        if(response.status){
-          alert(response.msg);
-        }
-      },
-      error: function(e){
-        console.log(e);
-      }
-    });
-  }
-
-  function getVehicles(){
-    $j.ajax({
-      type: 'GET',
-      url: "{% url 'getVehicles' %}",
-      success: function(response){
-        if(response.status){
-          let data = JSON.parse(response.data);
-          let vehiclesList = $('#vehiclesList');
-
-          for(let i=0; i<data.length; i++){
-            let vehicle = data[i].fields.alias;
-            let option = document.createElement('option');
-
-            option.text = vehicle;
-            option.setAttribute('value', data[i].pk);
-            vehiclesList.append(option);
-          }
-        }else{
-          alert(response.msgError);
-        }
-      },
-      error: function(e){
-        console.log(e);
-      }
-    });
-  }
-
-  $j('#btnSaveservice').click(function(e){
-    e.preventDefault();
-
-    //validation
-    let form = $j('#formSaveService');
-    let formData = jsonFormat(form.serializeArray());
-    formData['vehicle_id'] = $j('#vehiclesList').val();
-    
-    saveService(formData);
-  });
-
-  $j('#vehiclesList').change(function(){
-    let id_vehicle = $j(this).val();
-
-    $j.ajax({
-      type: 'GET',
-      data: {'vehicle': $j('#vehiclesList option:selected').text(), 'from_file': true},
-      url: "{% url 'getCurrentMileagesVehicle' %}",
-      success: function(response){
-        console.log(response);
-        if(response.status){
-            let current_mileages = response.current_mileages;
-            console.log(current_mileages);
-
-            if(current_mileages == 'null'){
-              $j('#id_start_kilometer').prop('readonly', false);
-            }
-
-            $j('#id_start_kilometer').val(current_mileages);
-            $j('#id_start_kilometer').prop('readonly', true);
-            $j('#id_start_kilometer').css('color', 'green');
-        }else{
-          alert(response.msgError);
-        }
-      },
-      error: function(e){
-        console.log(e);
-      }
-    });
-
-  });
-
-
+  var Dictionary = {
+    'getVehicles': {% url 'getVehicles' %},
+    'getCurrentMileagesVehicle': {% url 'getCurrentMileagesVehicle' %},
+  };
 </script>
+<script src="{% static 'js/registerService.js' %}"></script>
 
 {% endblock %}
