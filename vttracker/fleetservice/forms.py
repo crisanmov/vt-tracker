@@ -110,7 +110,7 @@ class ServiceForm(forms.ModelForm):
         )
 
         labels = {
-            'subject': 'Asunto:',
+            'subject': 'Lugar:',
             'from_depto': 'Departamento:',
             'start_kilometer': 'Km Inicial:',
             'end_kilometer': 'Km Final:',

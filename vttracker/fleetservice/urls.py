@@ -25,6 +25,7 @@ urlpatterns = [
         name='getCurrentMileagesVehicle'),
     url(r'^generate_performance/$', views.generatePerformance, \
         name='generatePerformance'),
+    url(r'^service_search/$', views.serviceSearch, name='serviceSearch'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

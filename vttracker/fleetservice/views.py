@@ -20,6 +20,7 @@ from fleetservice.models import (
     Driver,
     Vehicle,
     Binnacle,
+    Service,
     Refuel,
     DriverBinacle,
     DriverService,
@@ -147,7 +148,7 @@ def getRefuels(requests):
     response_data['status'] = True
     response_data['data'] = data
     response_data['msg'] = "QuerySet Status::Done"
-    
+
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @login_required(login_url='/accounts/login/')
@@ -339,6 +340,36 @@ def binnacleSearch(request):
     else:
         data = serializers.serialize('json', Binnacle.objects.filter(
         datetime__range=(startDate, endDateB)),
+        use_natural_foreign_keys=True)
+
+        response_data['status'] = True
+        response_data['data'] = data
+
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@login_required(login_url='/accounts/login/')
+def serviceSearch(request):
+
+    response_data = {}
+
+    startDateS = request.GET.get('startDateS')
+    endDateS = request.GET.get('endDateS')
+
+    if request.GET.get('option') == 'one':
+        vehicle = request.GET.get('vehicle')
+
+        data = serializers.serialize('json', Service.objects.filter(
+        datetime__range=(startDateS, endDateS),
+        vehicle=vehicle),
+        use_natural_foreign_keys=True)
+
+        response_data['status'] = True
+        response_data['data'] = data
+
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+    else:
+        data = serializers.serialize('json', Service.objects.filter(
+        datetime__range=(startDateS, endDateS)),
         use_natural_foreign_keys=True)
 
         response_data['status'] = True

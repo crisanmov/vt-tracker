@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<services>
+	<service>
+		<subject>Recolección material</subject>
+		<from_depto>Marketing</from_depto>
+		<start_kilometer>9637</start_kilometer>
+		<end_kilometer>9653</end_kilometer>
+		<datetime>2019-09-25T00:00:00</datetime>
+		<start_time>05:00:00</start_time>
+		<end_time>06:30:00</end_time>
+		<description>Example</description>
+		<vehicle>
+			<pk>1</pk>
+			<name>WP_1</name>
+			<enrollment>65GTSFQKW</enrollment>
+			<data_service>2019-01-01T00:00:00</data_service>
+		</vehicle>
+		<kilometros_recorridos>16</kilometros_recorridos>
+	</service>
+</services>

@@ -151,7 +151,7 @@
             <h4>Bitacora</h4>
             <a class="btn btn-warning" href="#" style="margin-left: 10px;" id="updateB">Actualizar</a>
           </div>
-
+          <!--filters for searching binnacle-->
           <div class="search-binnacle" style="display: flex;">
             <div class="form-group form-perf">
               <label for="vehicles">Fecha inicio: </label>
@@ -187,6 +187,7 @@
                 <th scope="col">Hora de inicio</th>
                 <th scope="col">Hora fin</th>
                 <th scope="col">Vehiculo</th>
+                <th scope="col">Kilometros recorridos</th>
                 <th id="thDriver" scope="col">Conductor</th>
 
               </tr>
@@ -229,17 +230,42 @@
             <h4>Encomiendas</h4>
             <a class="btn btn-warning" href="#" style="margin-left: 10px;" id="updateS">Actualizar</a>
           </div>
+          <!--filters for searching services-->
+          <div class="search-binnacle" style="display: flex;">
+            <div class="form-group form-perf">
+              <label for="vehicles">Fecha inicio: </label>
+              <input type="date" class="form-control" id="startDateS">
+            </div>
+            <div class="form-group form-perf">
+              <label for="vehicles">Fecha fin: </label>
+              <input type="date" class="form-control" id="endDateS">
+            </div>
+            <div class="form-group form-perf">
+              <input type="checkbox" name="vehicle" value=""
+              class="enableVehicle"> Vehiculo
+              <select class="form-control vehicleList" disabled>
+                <option value="0">Selecciona una opción</option>
+              </select>
+            </div>
+            <div class="form-group form-perf">
+              <label for="vehicles"></label><br>
+              <a class="btn btn-success" href="#" id="btnSearchService">Buscar</a>
+            </div>
+          </div>
+          <div class="form-group">
+            <a class="btn btn-outline-danger" href="#" id="exportService" style="display: none;">Exportar</a>
+          </div>
           <br>
           <table class="table table-striped">
             <thead>
               <tr>
                 <th scope="col"># ID</th>
-                <th scope="col">Asunto</th>
+                <th scope="col">Lugar</th>
                 <th scope="col">Solicitante</th>
                 <th scope="col">Fecha</th>
                 <th scope="col">Hora inicio</th>
                 <th scope="col">Hora fin</th>
-                <th scope="col">Conductor</th>
+                <th scope="col">Kilometros recorridos</th>
                 <th scope="col">Description</th>
               </tr>
             </thead>
@@ -470,6 +496,7 @@
       cleanContentServices(service);
       setColorSelect(service);
       getServices();
+      populateVehicles();
     });
 
     $j('#vehicle').click(function(){
@@ -603,6 +630,33 @@
 
         searchBinnacle(filter);
       }
+    });
+
+    $j('#btnSearchService').click(function(){
+
+      let startDateS = document.querySelector('#startDateS').value;
+      let endDateS = document.querySelector('#endDateS').value;
+
+      if($j('.enableVehicle').prop('checked')){
+        let vehiclesList = document.querySelector('.vehicleList');
+        let vehicle = vehiclesList.options[vehiclesList.selectedIndex].value;
+        let filter = {
+          'startDateS': startDateS,
+          'endDateS': endDateS,
+          'vehicle': vehicle,
+          'option': 'one',
+        };
+
+        searchService(filter);
+      }else{
+        let filter = {
+          'startDateS': startDateS,
+          'endDateS': endDateS,
+        };
+
+        searchService(filter);
+      }
+
     });
 
     $j('#btnGenerateP').click(function(){
@@ -755,7 +809,7 @@
 
       let startDateB = $j('#startDateB').val();
       let endDateB = $j('#endDateB').val();
-      let data = JSON.parse(localStorage.getItem('data'));
+      let data = JSON.parse(localStorage.getItem('dataBinnacles'));
       let json = {
         'binnacles':{
           'binnacle': [
@@ -766,6 +820,12 @@
       let binnacle = [];
 
       for(let i=0; i<data.length; i++){
+
+        let start_kilometer = data[i].fields.start_kilometer;
+        let end_kilometer = data[i].fields.end_kilometer;
+        let mileages = parseInt(end_kilometer) - parseInt(start_kilometer);
+
+        data[i].fields['kilometros_recorridos'] = mileages.toString();
         binnacle.push(data[i].fields);
       }
       json.binnacles.binnacle = binnacle;
@@ -800,8 +860,63 @@
       });
     });
 
+    $j('#exportService').click(function(){
 
-    //#################funcionts for modal#######################
+      let startDateS = $j('#startDateS').val();
+      let endDateS = $j('#endDateS').val();
+      let data = JSON.parse(localStorage.getItem('dataServices'));
+
+      let json = {
+        'services':{
+          'service': [
+
+          ]
+        }
+      };
+      let service = [];
+
+      for(let i=0; i<data.length; i++){
+
+        let start_kilometer = data[i].fields.start_kilometer;
+        let end_kilometer = data[i].fields.end_kilometer;
+        let mileages = parseInt(end_kilometer) - parseInt(start_kilometer);
+
+        data[i].fields['kilometros_recorridos'] = mileages.toString();
+        service.push(data[i].fields);
+      }
+
+      json.services.service = service;
+
+      $j.ajax({
+        type: 'POST',
+        url: "{% url 'generateFileXml' %}",
+        data: {
+          'json': JSON.stringify(json),
+          'csrfmiddlewaretoken': '{{ csrf_token }}',
+          'startDateB': startDateS,
+          'endDateB': endDateS,
+         },
+        success: function(response){
+          if(response.status){
+            let file_name = 'media/' + response.file_name;
+            let a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = file_name;
+            a.download = file_name.slice(7);
+            document.body.appendChild(a);
+            a.click();
+
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+    });
+
+    //################# funcionts for modal #######################
 
     function saveDriver(driver){
       let form = $('#formNewDriver');
@@ -838,7 +953,8 @@
       });
     }
 
-    //###############AJAX Functions##################
+    //################### AJAX Functions ##########################
+
     function getDrivers(){
 
       $j.ajax({
@@ -970,7 +1086,7 @@
           //console.log(response);
           if(response.status){
             let data = JSON.parse(response.data);
-
+            //console.log(data);
             //if data is empty
             if(data.length === 0){
               alert('No hay bitacoras registradas en el sistema.')
@@ -980,6 +1096,9 @@
             let content = "";
 
             for(let i=0; i<data.length; i++){
+
+              let start_kilometer = parseInt(data[i].fields.binnacle.start_kilometer);
+              let end_kilometer = parseInt(data[i].fields.binnacle.end_kilometer);
               //console.log(data[i]);
               //let pk = data[i].pk;
               let id = i + 1;
@@ -988,6 +1107,7 @@
               let datetime = data[i].fields.binnacle.datetime.slice(0, 10);
               let end_time = data[i].fields.binnacle.end_time;
               let vehicle = data[i].fields.binnacle.vehicle.alias;
+              let mileages = end_kilometer - start_kilometer;
               let driver = data[i].fields.driver.name;
 
               content += "<tr><td>" + id +
@@ -996,6 +1116,7 @@
                 "</td><td>"  + start_time +
                 "</td><td>" + end_time +
                 "</td><td>" + vehicle +
+                "</td><td>" + mileages.toString() +
                 "</td><td>" + driver + "</td></tr>";
             }
 
@@ -1018,7 +1139,7 @@
         type: 'GET',
         url: "{% url 'getServices' %}",
         success: function(response){
-          console.log(response);
+
           if(response.status){
             let data = JSON.parse(response.data);
 
@@ -1033,13 +1154,16 @@
             for(let i=0; i<data.length; i++){
               //console.log(data[i]);
               //let pk = data[i].pk;
+              let end_kilometer = data[i].fields.service.end_kilometer;
+              let start_kilometer = data[i].fields.service.start_kilometer;
               let id = i + 1;
               let subject = data[i].fields.service.subject;
               let from_depto = data[i].fields.service.from_depto;
               let datetime = data[i].fields.service.datetime.slice(0,10);
               let start_time = data[i].fields.service.start_time;
               let end_time = data[i].fields.service.end_time;
-              let driver = data[i].fields.driver.name;
+              //let driver = data[i].fields.driver.name;
+              let mileages = parseInt(end_kilometer) - parseInt(start_kilometer)
               let description = data[i].fields.service.description;
 
               content += "<tr><td>" + id +
@@ -1048,7 +1172,7 @@
                 "</td><td>" + datetime +
                 "</td><td>" + start_time +
                 "</td><td>" + end_time +
-                "</td><td>" + driver +
+                "</td><td>" + mileages.toString() +
                 "</td><td>" + description + "</td></tr>";
             }
 
@@ -1199,9 +1323,8 @@
               let vehicle = data[i].fields.vehicle.name;
               let end_kilometer = data[i].fields.end_kilometer;
               let start_kilometer = data[i].fields.start_kilometer;
+              let driver = data[i].fields.driver.name;
               let result_km = parseInt(end_kilometer) - parseInt(start_kilometer);
-
-              document.querySelector('#thDriver').innerHTML = "Kilometros recorridos";
 
               content += "<tr><td>" + pk +
                 "</td><td>" + route +
@@ -1209,11 +1332,12 @@
                 "</td><td>"  + start_time +
                 "</td><td>" + end_time +
                 "</td><td>" + vehicle +
-                "</td><td>" + result_km + 'km' + "</td></tr>";
+                "</td><td>" + result_km + ' km' +
+                "</td><td>" + driver + "</td></tr>";
             }
             tbodyBinnacle.innerHTML = content;
 
-            localStorage.setItem('data', JSON.stringify(data));
+            localStorage.setItem('dataBinnacles', JSON.stringify(data));
 
           }else{
             alert(response.msgError);
@@ -1225,5 +1349,60 @@
       });
     }
 
+    function searchService(filter){
+
+      $j.ajax({
+        type: 'GET',
+        url: "{% url 'serviceSearch' %}",
+        data: filter,
+        success: function(response){
+          if(response.status){
+            //console.log(JSON.parse(response.data));
+            let data = JSON.parse(response.data);
+
+            if(data.length === 0){
+              alert('No se encontraron resultados.')
+            }
+
+            document.querySelector('#exportService').style.display = 'block';
+            let tbodyServices = document.querySelector('#tbodyServices');
+            let content = "";
+
+            for(let i=0; i<data.length; i++){
+              //console.log(data[i]);
+              let end_kilometer = data[i].fields.end_kilometer;
+              let start_kilometer = data[i].fields.start_kilometer;
+              let mileages = parseInt(end_kilometer) - parseInt(start_kilometer);
+              let id = i + 1;
+              let subject = data[i].fields.subject;
+              let from_depto = data[i].fields.from_depto;
+              let datetime = data[i].fields.datetime.slice(0,10);
+              let start_time = data[i].fields.start_time;
+              let end_time = data[i].fields.end_time;
+              let description = data[i].fields.description;
+
+              content += "<tr><td>" + id +
+                "</td><td>" + subject +
+                "</td><td>"  + from_depto +
+                "</td><td>" + datetime +
+                "</td><td>" + start_time +
+                "</td><td>" + end_time +
+                "</td><td>" + mileages +
+                "</td><td>" + description + "</td></tr>";
+
+            }
+
+            tbodyServices.innerHTML = content;
+            localStorage.setItem('dataServices', JSON.stringify(data));
+
+          }else{
+            alert(response.msgError);
+          }
+        },
+        error: function(e){
+          console.log(e);
+        }
+      });
+    }
   </script>
 {% endblock %}
